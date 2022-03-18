@@ -3,6 +3,8 @@ using UnityEngine;
 public class Switching : MonoBehaviour
 {
     [SerializeField] private AudioClip weaponSelectClip;
+    [SerializeField] private Recoil recoil;
+    [SerializeField] private Scope scope;
 
     private int selectedWeapon = 0;
     private Animator _animator;
@@ -17,8 +19,13 @@ public class Switching : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.clip = weaponSelectClip;
+        if (recoil == null) gameObject.GetComponentInParent<Recoil>();
+        if (scope == null) scope = gameObject.GetComponent<Scope>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.clip = weaponSelectClip;
+        }
         SelectWeapon();
     }
 
@@ -37,6 +44,18 @@ public class Switching : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha3) && transform.childCount >= 3)
         {
             selectedWeapon = 2;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4) && transform.childCount >= 4)
+        {
+            selectedWeapon = 3;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5) && transform.childCount >= 5)
+        {
+            selectedWeapon = 4;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha6) && transform.childCount >= 6)
+        {
+            selectedWeapon = 5;
         }
         if (selectedWeapon != previousSelect)
         {
@@ -59,5 +78,7 @@ public class Switching : MonoBehaviour
             i++;
         }
         audioSource.Play();
+        scope.Switch();
+        recoil.Switch();
     }
 }

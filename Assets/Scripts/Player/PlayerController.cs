@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -7,24 +5,30 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform playerCamera = null;
     [SerializeField] private CharacterController controller = null;
     [SerializeField] private AudioClip breathClip = null;
+    [SerializeField] private Switching switching;
 
     private float cameraVertical = 0f;
-    private float cameraSensitivity = 120f;
-    private float movementSpeed = 1.9f;
+    private float cameraSensitivity = 70f;
+    private float movementSpeed = 1f;
+    private float _movementPlus = 0f;
     private float gravity = -2f;
     private float velocity = 0f;
     private float jumpHeight = 0.2f;
     private bool lockCursor = true;
     private AudioSource audioSource;
-
-    // Scripts
-    private Switching switching;
+    
+    public float movementPlus
+    {
+        get { return _movementPlus; }
+        set { _movementPlus = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        switching = FindObjectOfType<Switching>();
         controller = GetComponent<CharacterController>();
+        if (switching == null) switching = FindObjectOfType<Switching>();
+        if (playerCamera == null) playerCamera = GameObject.FindWithTag("Camera Look").transform;
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
@@ -35,6 +39,7 @@ public class PlayerController : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
+        movementSpeed += _movementPlus;
     }
 
     // Update is called once per frame
@@ -74,9 +79,9 @@ public class PlayerController : MonoBehaviour
         }
 
         HandleSpeedMovement();
-        switching.animator.SetFloat("Speed", movementSpeed);
+        switching.animator.SetFloat("Speed", (movementSpeed + _movementPlus));
         Vector3 move = (transform.right * direction.x + transform.forward * direction.y) + Vector3.up * velocity;
-        controller.Move(move * movementSpeed * Time.deltaTime);
+        controller.Move(move * (movementSpeed + _movementPlus) * Time.deltaTime);
     }
 
     void HandleSpeedMovement()
@@ -87,15 +92,15 @@ public class PlayerController : MonoBehaviour
             {
                 audioSource.Play();
             }
-            movementSpeed = 8f;
+            movementSpeed = 6f + _movementPlus;
             return;
         }
         audioSource.Stop();
         if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
         {
-            movementSpeed = 3f;
+            movementSpeed = 2.1f + _movementPlus;
             return;
         }
-        movementSpeed = 1.9f;
+        movementSpeed = 1f + _movementPlus;
     }
 }
