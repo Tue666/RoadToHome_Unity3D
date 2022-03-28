@@ -1,7 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Helpers
 {
+    public static bool ContainsKeyButValueNotNull<X, Y>(Dictionary<X, Y> dictionary, X expectedKey)
+    {
+        Y actualValue;
+        return dictionary.TryGetValue(expectedKey, out actualValue) && actualValue != null;
+    }
+
     public static bool HasParameter(string paramName, Animator animator)
     {
         foreach (AnimatorControllerParameter param in animator.parameters)

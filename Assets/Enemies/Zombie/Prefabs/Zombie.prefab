@@ -1983,7 +1983,6 @@ MonoBehaviour:
   takeDamageEffect: {fileID: 1000010191825552, guid: 83e55d3418297934fab882559d009285, type: 3}
   defenseEffect: {fileID: 100004, guid: 240a0017cdd7934499c19f014aabe974, type: 3}
   evolutionEffect: {fileID: 1006615274023270, guid: 9092d3ff769a86f499938c5917007ce9, type: 3}
-  autoSpawner: {fileID: 0}
 --- !u!195 &-2441812089860447158
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -839,11 +839,9 @@ MonoBehaviour:
   _summonRatePercent: 20
   health: 100
   defense: 10
-  deathClip: {fileID: 8300000, guid: 1d92c5ac0e056b045b4461b147f95be5, type: 3}
   takeDamageEffect: {fileID: 1000012142692022, guid: a475880e7da0e9548aa05cb7933752cd, type: 3}
   defenseEffect: {fileID: 100004, guid: 240a0017cdd7934499c19f014aabe974, type: 3}
   evolutionEffect: {fileID: 1006615274023270, guid: 9092d3ff769a86f499938c5917007ce9, type: 3}
-  autoSpawner: {fileID: 0}
 --- !u!114 &661608889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -864,7 +862,6 @@ MonoBehaviour:
   _detectRange: 10
   attackRate: 5
   wanderRange: 500
-  detectClip: {fileID: 8300000, guid: 168c9a5ac7025814ea9c89e5098a3cad, type: 3}
 --- !u!195 &8365584334566091952
 NavMeshAgent:
   m_ObjectHideFlags: 0

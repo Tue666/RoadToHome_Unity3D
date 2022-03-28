@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 public class AutoSpawner : MonoBehaviour
@@ -9,7 +8,8 @@ public class AutoSpawner : MonoBehaviour
     [SerializeField] private int _spawnNumber = 10;
 
     private int _spawnIndex = 1;
-    private float spawnTime = 3f;
+    private float spawnTime = 5f;
+    private float[] summonRates;
     private float totalSummonRate;
 
     public int spawnNumber
@@ -23,11 +23,25 @@ public class AutoSpawner : MonoBehaviour
         set { _spawnIndex = value; }
     }
 
+    void InitializeIfNecessary()
+    {
+        if (spawnPoints == null || spawnPoints.Length == 0) spawnPoints = GameObject.FindGameObjectsWithTag("Spawn Area");
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        if (spawnPoints == null || spawnPoints.Length == 0) spawnPoints = GameObject.FindGameObjectsWithTag("Spawn Area");
-        totalSummonRate = enemies.Sum(x => x.GetComponent<Target>().summonRatePercent / 100);
+        InitializeIfNecessary();
+        int i = 0;
+        summonRates = new float[enemies.Length];
+        foreach (GameObject enemy in enemies)
+        {
+            Target target = enemy.GetComponent<Target>();
+            float rate = target.summonRatePercent / 100;
+            summonRates[i] = rate;
+            totalSummonRate += rate;
+            i++;
+        }
         ReSpawn();
     }
 
@@ -39,17 +53,18 @@ public class AutoSpawner : MonoBehaviour
             float currentRate;
             float nextRate = 0;
             float currentTotal = 0;
+            int i = 0;
             foreach (GameObject enemy in enemies)
             {
-                Target target = enemy.GetComponent<Target>();
                 currentRate = nextRate;
-                nextRate = target.summonRatePercent / 100;
+                nextRate = summonRates[i];
                 currentTotal += nextRate;
                 if (randomSummonRate >= currentRate && (randomSummonRate < nextRate || randomSummonRate < currentTotal))
                 {
                     int randomPosition = Random.Range(0, spawnPoints.Length);
                     Instantiate(enemy, spawnPoints[randomPosition].transform.position, Quaternion.identity);
                     _spawnIndex++;
+                    i++;
                     break;
                 }
             }

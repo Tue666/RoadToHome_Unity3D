@@ -4,55 +4,48 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Transform playerCamera = null;
     [SerializeField] private CharacterController controller = null;
-    [SerializeField] private AudioClip breathClip = null;
-    [SerializeField] private Switching switching;
 
     private float cameraVertical = 0f;
     private float cameraSensitivity = 70f;
-    private float movementSpeed = 1f;
-    private float _movementPlus = 0f;
     private float gravity = -2f;
     private float velocity = 0f;
     private float jumpHeight = 0.2f;
     private bool lockCursor = true;
-    private AudioSource audioSource;
-    
-    public float movementPlus
+    private bool isBreathing = false;
+    private bool isRunning = false;
+    private bool isWalking = false;
+    private float runningStaminaCost = 2f;
+    private float walkingStaminaCost = 1f;
+    private float staminaRestore = 2f;
+
+    void InitializeIfNecessary()
     {
-        get { return _movementPlus; }
-        set { _movementPlus = value; }
+        if (controller == null) controller = GetComponent<CharacterController>();
+        if (playerCamera == null) playerCamera = GameObject.FindWithTag("Camera Look").transform;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        controller = GetComponent<CharacterController>();
-        if (switching == null) switching = FindObjectOfType<Switching>();
-        if (playerCamera == null) playerCamera = GameObject.FindWithTag("Camera Look").transform;
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.clip = breathClip;
-            audioSource.loop = true;
-        }
+        InitializeIfNecessary();
         if (lockCursor)
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
-        movementSpeed += _movementPlus;
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdateCameraLock();
+        UpdateCameraLook();
         UpdateMovement();
     }
 
-    void UpdateCameraLock()
+    void UpdateCameraLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * cameraSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * cameraSensitivity * Time.deltaTime;
+        if (mouseX == 0 && mouseY == 0) return;
 
         // Vertical lock
         cameraVertical -= mouseY;
@@ -79,28 +72,83 @@ public class PlayerController : MonoBehaviour
         }
 
         HandleSpeedMovement();
-        switching.animator.SetFloat("Speed", (movementSpeed + _movementPlus));
         Vector3 move = (transform.right * direction.x + transform.forward * direction.y) + Vector3.up * velocity;
-        controller.Move(move * (movementSpeed + _movementPlus) * Time.deltaTime);
+        controller.Move(move * (PlayerManager.Instance.movementSpeed + PlayerManager.Instance.movementPlus) * Time.deltaTime);
     }
 
     void HandleSpeedMovement()
     {
+        if (PlayerManager.Instance.stamina <= 0)
+        {
+            StopMovement();
+            return;
+        }
+
+        Breathing();
+
         if (Input.GetKey("left shift"))
         {
-            if (!audioSource.isPlaying)
+            if (!isRunning)
             {
-                audioSource.Play();
+                isRunning = true;
+                PlayerManager.Instance.movementSpeed = 6f + PlayerManager.Instance.movementPlus;
+                PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost);
+                WeaponManager.currentAnimator.SetBool("Running", true);
             }
-            movementSpeed = 6f + _movementPlus;
             return;
         }
-        audioSource.Stop();
-        if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
+        if ((Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0))
         {
-            movementSpeed = 2.1f + _movementPlus;
+            if (isRunning)
+            {
+                isRunning = false;
+                isWalking = false; // Reset walking
+                WeaponManager.currentAnimator.SetBool("Running", false);
+            }
+            if (!isWalking)
+            {
+                isWalking = true;
+                PlayerManager.Instance.movementSpeed = 2f + PlayerManager.Instance.movementPlus;
+                PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost);
+                WeaponManager.currentAnimator.SetBool("Walking", true);
+            }
             return;
         }
-        movementSpeed = 1f + _movementPlus;
+        if (isWalking)
+        {
+            isWalking = false;
+            PlayerManager.Instance.movementSpeed = 1f + PlayerManager.Instance.movementPlus;
+            PlayerManager.Instance.StartStaminaDrop(staminaRestore);
+            WeaponManager.currentAnimator.SetBool("Walking", false);
+        }
+    }
+
+    void StopMovement()
+    {
+        PlayerManager.Instance.movementSpeed = 1f + PlayerManager.Instance.movementPlus;
+        PlayerManager.Instance.StartStaminaDrop(staminaRestore);
+        WeaponManager.currentAnimator.SetBool("Running", false);
+        WeaponManager.currentAnimator.SetBool("Walking", false);
+    }
+
+    void Breathing()
+    {
+        // Start breath when stamine less than 30
+        if (PlayerManager.Instance.stamina <= 30)
+        {
+            if (!isBreathing)
+            {
+                isBreathing = true;
+                AudioManager.Instance.PlayMusic("Player Breath");
+            }
+        }
+        else
+        {
+            if (isBreathing)
+            {
+                isBreathing = false;
+                AudioManager.Instance.StopMusic("Player Breath");
+            }
+        }
     }
 }

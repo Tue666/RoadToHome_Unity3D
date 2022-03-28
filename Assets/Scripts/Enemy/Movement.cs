@@ -12,7 +12,6 @@ public class Movement : MonoBehaviour
     [SerializeField] private float _detectRange = 10f;
     [SerializeField] private float attackRate = 3f;
     [SerializeField] private float wanderRange = 50f;
-    [SerializeField] private AudioClip detectClip;
 
     private bool isDectecting = true;
     private bool isDetectClip = false;
@@ -21,11 +20,8 @@ public class Movement : MonoBehaviour
     private float mutableDetectRange;
     private float speed = 0.5f;
     private float nextAttackTime = 0f;
-    private Animator animator;
-    private AudioSource audioSource;
     private NavMeshAgent _agent;
     private Target target;
-    private Player targetedPlayer;
 
     public float damage
     {
@@ -58,19 +54,17 @@ public class Movement : MonoBehaviour
         set { _agent = value; }
     }
 
+    void InitializeIfNecessary()
+    {
+        if (_player == null) _player = GameObject.FindWithTag("Player").transform;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        if (target == null) target = gameObject.GetComponent<Target>();
-        if (_player == null) _player = GameObject.FindWithTag("Player").transform;
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.clip = detectClip;
-        }
-        targetedPlayer = _player.gameObject.GetComponent<Player>();
-        animator = gameObject.GetComponent<Animator>();
-        _agent = gameObject.GetComponent<NavMeshAgent>();
+        InitializeIfNecessary();
+        target = GetComponent<Target>();
+        _agent = GetComponent<NavMeshAgent>();
         _agent.stoppingDistance = attackRange;
         mutableDetectRange = _detectRange;
         StartCoroutine(RandomSpeed(4/speed));
@@ -85,7 +79,7 @@ public class Movement : MonoBehaviour
     IEnumerator Wander()
     {
         mutableDetectRange = _detectRange;
-        animator.SetFloat("Speed", minSpeed);
+        target.animator.SetFloat("Speed", minSpeed);
         _agent.speed = minSpeed;
         isDetectClip = false;
         target.isChasing = false;
@@ -109,7 +103,7 @@ public class Movement : MonoBehaviour
             mutableDetectRange = _detectRange * 2.5f + escapeRange;
             if (!isDetectClip)
             {
-                audioSource.Play();
+                AudioManager.Instance.PlayEffect("ENEMY", "Enemy Detect");
                 isDetectClip = true;
                 NearEnemiesChaseThePlayer();
             }
@@ -151,20 +145,15 @@ public class Movement : MonoBehaviour
                 if (Time.time >= nextAttackTime)
                 {
                     nextAttackTime = Time.time + attackRate;
-                    AttackTargeted(_damage);
+                    target.animator.SetTrigger("Attack");
+                    PlayerManager.Instance.TakeDamage(_damage, gameObject);
                 }
             }
-            animator.SetFloat("Speed", speed);
+            target.animator.SetFloat("Speed", speed);
             _agent.speed = speed;
             _agent.SetDestination(_player.position);
         }
         else _agent.isStopped = true;
-    }
-
-    void AttackTargeted(float amount)
-    {
-        animator.SetTrigger("Attack");
-        targetedPlayer.TakeDamage(amount);
     }
 
     IEnumerator RandomSpeed(float randomTime)

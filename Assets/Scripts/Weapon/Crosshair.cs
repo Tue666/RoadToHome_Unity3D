@@ -12,11 +12,16 @@ public class Crosshair : MonoBehaviour
     private float currentSize = 60f;
     private float speed = 5f;
 
-    // Start is called before the first frame update
-    void Start()
+    void InitializeIfNecessary()
     {
         if (crosshair == null) crosshair = gameObject.GetComponent<RectTransform>();
         if (controller == null) controller = GameObject.FindWithTag("Player").GetComponent<CharacterController>();
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        InitializeIfNecessary();
     }
 
     // Update is called once per frame
@@ -31,7 +36,6 @@ public class Crosshair : MonoBehaviour
         else if (IsRunning) currentSize = Mathf.Lerp(currentSize, runningSize, speed * Time.deltaTime);
         else if (IsWalking) currentSize = Mathf.Lerp(currentSize, walkingSize, speed * Time.deltaTime);
         else currentSize = Mathf.Lerp(currentSize, idleSize, speed * Time.deltaTime);
-
         crosshair.sizeDelta = new Vector2(currentSize, currentSize);
     }
 

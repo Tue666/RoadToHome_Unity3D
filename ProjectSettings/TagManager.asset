@@ -12,6 +12,7 @@ TagManager:
   - Crosshair
   - Focused
   - Spawn Points
+  - Space Bag
   layers:
   - Default
   - TransparentFX

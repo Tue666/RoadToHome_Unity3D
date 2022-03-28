@@ -3,56 +3,66 @@ using UnityEngine;
 
 public class Shoot : MonoBehaviour
 {
+    [SerializeField] private int ammoType = 0;
+    [SerializeField] private Sprite icon;
     [SerializeField] private float damage = 10f;
     [SerializeField] private Camera cameraFOV = null;
     [SerializeField] private float attackRate = 0.1f;
-    [SerializeField] private GameObject muzzleFlash = null;
+    [SerializeField] private ParticleSystem muzzleFlash = null;
     [SerializeField] private TrailRenderer trail = null;
     [SerializeField] private Transform barrel = null;
     [SerializeField] private AudioClip shotClip = null;
     [SerializeField] private int maxAmmo = 30;
     [SerializeField] private float reloadTime = 2.6f;
     [SerializeField] private AudioClip reloadClip;
-    [SerializeField] private Recoil recoil;
+    [SerializeField] private WeaponBar weaponBar;
+    [SerializeField] private SpaceBag spaceBag;
 
+    private float nextAttackTime = 0f;
+    private int currentAmmo = 0;
+    private bool isReloading;
     private AudioSource audioSource;
     private Animator animator;
-    private float nextAttackTime = 0f;
-    private int currentAmmo;
-    private bool isReloading;
-    
 
     // Start is called before the first frame update
     void Start()
     {
         animator = gameObject.GetComponent<Animator>();
-        if (recoil == null) gameObject.GetComponentInParent<Recoil>();
+        audioSource = gameObject.GetComponent<AudioSource>();
         if (cameraFOV == null) cameraFOV = GameObject.FindWithTag("Camera Recoil").GetComponent<Camera>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.priority = 0;
-            audioSource.playOnAwake = false;
-            audioSource.loop = false;
-        }
-        currentAmmo = maxAmmo;
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void OnEnable()
     {
+        if (weaponBar == null)
+        {
+            Debug.Log("Call weapon bar");
+            weaponBar = gameObject.GetComponent<WeaponBar>();
+        }
+        if (spaceBag == null)
+        {
+            Debug.Log("Call space bag");
+            spaceBag = GameObject.FindWithTag("Space Bag").GetComponent<SpaceBag>();
+        }
         isReloading = false;
+        weaponBar.UpdateIconWeapon(icon);
+        weaponBar.noMagazine = false; // Reset color magazine
+        weaponBar.UpdateMagazine(currentAmmo);
+        weaponBar.noRemaining = false; // Resr color reamining ammo
+        weaponBar.UpdateRemainingAmmo(spaceBag.GetAmmo(ammoType));
     }
 
     // Update is called once per frame
     void Update()
     {
         if (isReloading) return;
-        if (currentAmmo <= 0 || Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo)
+        if (spaceBag.GetAmmo(ammoType) > 0 && (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo))
         {
             StartCoroutine(Reload());
             return;
         }
-        if (Input.GetButton("Fire1") && Time.time >= nextAttackTime)
+        if (currentAmmo > 0 && Input.GetButton("Fire1") && Time.time >= nextAttackTime)
         {
             nextAttackTime = Time.time + attackRate;
             Shooting();
@@ -69,7 +79,20 @@ public class Shoot : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
         animator.SetBool("Reloading", false);
         yield return new WaitForSeconds(0.25f);
-        currentAmmo = maxAmmo;
+        int diff = maxAmmo - currentAmmo;
+        int remainingAmmo = spaceBag.GetAmmo(ammoType);
+        if (diff >= remainingAmmo)
+        {
+            spaceBag.SetAmmo(ammoType, remainingAmmo * -1);
+            currentAmmo += remainingAmmo;
+        }
+        else
+        {
+            spaceBag.SetAmmo(ammoType, (maxAmmo - currentAmmo) * -1);
+            currentAmmo = maxAmmo;
+        }
+        weaponBar.UpdateMagazine(currentAmmo);
+        weaponBar.UpdateRemainingAmmo(spaceBag.GetAmmo(ammoType));
         isReloading = false;
     }
 
@@ -79,9 +102,8 @@ public class Shoot : MonoBehaviour
         audioSource.clip = shotClip;
         audioSource.Play();
         currentAmmo--;
-        recoil.RecoilAttacking();
-        GameObject muzzle = Instantiate(muzzleFlash, barrel.position, barrel.rotation);
-        Destroy(muzzle, 0.022f);
+        weaponBar.UpdateMagazine(currentAmmo);
+        muzzleFlash.Play();
         TrailRenderer bullet = Instantiate(trail, barrel.position, barrel.rotation);
         bullet.AddPosition(barrel.position);
         RaycastHit hit;

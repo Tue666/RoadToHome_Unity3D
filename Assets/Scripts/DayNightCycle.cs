@@ -9,7 +9,7 @@ public class DayNightCycle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lightComponent = gameObject.GetComponent<Light>();
+        lightComponent = GetComponent<Light>();
     }
 
     // Update is called once per frame

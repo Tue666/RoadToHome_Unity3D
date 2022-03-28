@@ -9,7 +9,6 @@ public class Target : MonoBehaviour
     [SerializeField] private float _summonRatePercent = 0f;
     [SerializeField] private float health = 50f;
     [SerializeField] private float defense = 5f;
-    [SerializeField] private AudioClip deathClip;
     [SerializeField] private GameObject takeDamageEffect;
     [SerializeField] private GameObject defenseEffect;
     [SerializeField] private GameObject evolutionEffect;
@@ -19,8 +18,7 @@ public class Target : MonoBehaviour
     private int currentExp = 0;
     private int maxExp;
     private int currentLevel = 1;
-    private AudioSource audioSource;
-    private Animator animator;
+    private Animator _animator;
     private Movement movement;
     private AutoSpawner autoSpawner;
     private Text nameBar;
@@ -40,15 +38,24 @@ public class Target : MonoBehaviour
         get { return _summonRatePercent; }
         set { _summonRatePercent = value; }
     }
+    public Animator animator
+    {
+        get { return _animator; }
+        set { _animator = value; }
+    }
+
+    void InitializeIfNecessary()
+    {
+        if (autoSpawner == null) autoSpawner = GameObject.FindWithTag("Spawn Points").GetComponent<AutoSpawner>();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        movement = gameObject.GetComponent<Movement>();
-        animator = gameObject.GetComponent<Animator>();
-        nameBar = gameObject.GetComponentInChildren<Text>();
-        if (autoSpawner == null) autoSpawner = GameObject.FindWithTag("Spawn Points").GetComponent<AutoSpawner>();
-        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        InitializeIfNecessary();
+        movement = GetComponent<Movement>();
+        _animator = GetComponent<Animator>();
+        nameBar = GetComponentInChildren<Text>();
         UpdateStats();
         StartCoroutine(Evolution(evolutionSpeed));
     }
@@ -81,9 +88,9 @@ public class Target : MonoBehaviour
         if (!_isDie)
         {
             isChasing = true;
-            if (Helpers.HasParameter("Take Damage", animator) && !Helpers.IsAnimatorPlayingAny(animator))
+            if (Helpers.HasParameter("Take Damage", _animator) && !Helpers.IsAnimatorPlayingAny(_animator))
             {
-                animator.SetTrigger("Take Damage");
+                _animator.SetTrigger("Take Damage");
             }
             float dameTaken = amount - defense;
             if (dameTaken <= 0)
@@ -107,11 +114,9 @@ public class Target : MonoBehaviour
     void Die()
     {
         _isDie = true;
-        animator.SetTrigger("Death");
-        audioSource.clip = deathClip;
-        audioSource.Play();
-        Player player = movement.player.gameObject.GetComponent<Player>();
-        player.IncreaseExp(currentLevel);
+        _animator.SetTrigger("Death");
+        AudioManager.Instance.PlayEffect("ENEMY", "Enemy Death");
+        PlayerManager.Instance.IncreaseExp(currentLevel);
         int currentIndex = autoSpawner.spawnIndex;
         autoSpawner.spawnIndex--;
         if (currentIndex == autoSpawner.spawnNumber) autoSpawner.ReSpawn();
@@ -129,10 +134,10 @@ public class Target : MonoBehaviour
                 currentExp = Mathf.Abs(diff);
                 UpdateStats();
                 movement.agent.isStopped = true;
-                animator.SetBool("Evolution", true);
+                _animator.SetBool("Evolution", true);
                 Instantiate(evolutionEffect, transform.position, Quaternion.AngleAxis(-90f, Vector3.right));
                 yield return new WaitForSeconds(12f);
-                animator.SetBool("Evolution", false);
+                _animator.SetBool("Evolution", false);
                 movement.agent.isStopped = false;
             }
             yield return new WaitForSeconds(evolutionSpeed + Random.Range(0, 10));

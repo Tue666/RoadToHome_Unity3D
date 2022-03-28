@@ -15,12 +15,8 @@ public class Throw : MonoBehaviour
     void Start()
     {
         animator = gameObject.GetComponent<Animator>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.playOnAwake = false;
-            audioSource.loop = false;
-        }
+        audioSource = gameObject.GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     // Update is called once per frame
