@@ -4,27 +4,31 @@ using UnityEngine;
 public class GunController : MonoBehaviour
 {
     [SerializeField] private Gun currentGun;
-    [SerializeField] private Camera cameraFOV = null;
+    [SerializeField] private Gun[] gunsEquiqqed;
 
     private float nextShootingTime;
     private bool isReloading;
+    private Camera cameraFOV = null;
     private RaycastHit hit;
 
     // Scope
     private int[] scopedFOV = { 10, 0, 0, 0, 0, 0, 0, 0, 20 }; // FOV from no scope to scope x8
     private bool isScoped = false;
-    private float previousFOV;
+    private float normalFOV;
     // Recoil
     private Vector3 currentRotation;
     private Vector3 targetRotation;
 
+    private WaitForSeconds waitScope = new WaitForSeconds(0.01f);
+
     // Start is called before the first frame update
     void Start()
     {
-        if (cameraFOV == null) cameraFOV = GameObject.FindWithTag("Camera Recoil").GetComponent<Camera>();
-
+        cameraFOV = PlayerManager.Instance.cameraRecoil.GetComponent<Camera>();
         WeaponManager.currentWeapon = currentGun.gameObject.transform;
         WeaponManager.currentAnimator = currentGun.animator;
+        normalFOV = cameraFOV.fieldOfView;
+        MainUI.Instance.InitMainWeaponBar(gunsEquiqqed, currentGun);
     }
 
     // Update is called once per frame
@@ -39,18 +43,26 @@ public class GunController : MonoBehaviour
                 StartCoroutine(Reload());
                 return;
             }
-            if (currentGun.currentAmmoCount > 0 && Input.GetButton("Fire1") && Time.time >= nextShootingTime)
+
+            // Must lock cursor to do the following
+            if (Cursor.lockState == CursorLockMode.Locked)
             {
-                nextShootingTime = Time.time + currentGun.shootingRate;
-                Shooting();
-            }
-            if (Input.GetButtonDown("Fire2") && currentGun != null)
-            {
-                StartCoroutine(OnScoped());
-            }
-            if (Input.GetButtonUp("Fire2") && currentGun != null)
-            {
-                StartCoroutine(OnUnScoped());
+                if (Input.GetButton("Fire1") && Time.time >= nextShootingTime)
+                {
+                    nextShootingTime = Time.time + currentGun.shootingRate;
+                    if (currentGun.currentAmmoCount > 0)
+                        Shooting();
+                    else
+                        AudioManager.Instance.PlayEffect("WEAPON", "Out Of Ammo");
+                }
+                if (Input.GetButtonDown("Fire2") && currentGun != null)
+                {
+                    StartCoroutine(OnScoped());
+                }
+                if (Input.GetButtonUp("Fire2") && currentGun != null)
+                {
+                    StartCoroutine(OnUnScoped());
+                }
             }
         }
     }
@@ -74,6 +86,7 @@ public class GunController : MonoBehaviour
         currentGun.animator.SetBool("Reloading", false);
         yield return new WaitForSeconds(0.25f);
         currentGun.currentAmmoCount = currentGun.maxAmmoCount;
+        MainUI.Instance.CurrentAmmoChanged(currentGun.currentAmmoCount);
         isReloading = false;
     }
 
@@ -83,6 +96,7 @@ public class GunController : MonoBehaviour
         currentGun.animator.SetTrigger("Attack");
         currentGun.muzzleFlash.Play();
         currentGun.currentAmmoCount--;
+        MainUI.Instance.CurrentAmmoChanged(currentGun.currentAmmoCount);
         targetRotation += new Vector3(Random.Range(0, currentGun.recoilX), Random.Range(-currentGun.recoilY, currentGun.recoilY), 0);
         TrailRenderer bullet = Instantiate(currentGun.trail, currentGun.barrel.position, currentGun.barrel.rotation);
         bullet.AddPosition(currentGun.barrel.position);
@@ -112,28 +126,37 @@ public class GunController : MonoBehaviour
     IEnumerator OnUnScoped()
     {
         isScoped = false;
-
-        if (previousFOV <= 0) yield break;
         currentGun.animator.SetBool("Scoped", false);
-        while (cameraFOV.fieldOfView < previousFOV)
+        while (cameraFOV.fieldOfView < normalFOV)
         {
-            cameraFOV.fieldOfView = cameraFOV.fieldOfView + currentGun.zoomSpeed;
-            yield return new WaitForSeconds(0.01f);
+            if (isScoped) yield break;
+            float diff = cameraFOV.fieldOfView + currentGun.zoomSpeed;
+            if (diff > normalFOV)
+            {
+                cameraFOV.fieldOfView = normalFOV;
+                yield break;
+            }
+            cameraFOV.fieldOfView = diff;
+            yield return waitScope;
         }
     }
 
     IEnumerator OnScoped()
     {
         isScoped = true;
-
-        if (!isScoped) yield break;
         currentGun.animator.SetBool("Scoped", true);
-        previousFOV = cameraFOV.fieldOfView;
         float newFOV = cameraFOV.fieldOfView - scopedFOV[currentGun.scopeEquipped];
         while (cameraFOV.fieldOfView > newFOV)
         {
-            cameraFOV.fieldOfView = cameraFOV.fieldOfView - currentGun.zoomSpeed;
-            yield return new WaitForSeconds(0.01f);
+            if (!isScoped) yield break;
+            float diff = cameraFOV.fieldOfView - currentGun.zoomSpeed;
+            if (diff < newFOV)
+            {
+                cameraFOV.fieldOfView = newFOV;
+                yield break;
+            }
+            cameraFOV.fieldOfView = diff;
+            yield return waitScope;
         }
     }
 
@@ -149,5 +172,6 @@ public class GunController : MonoBehaviour
         currentGun = gun;
         currentGun.gameObject.SetActive(true);
         currentGun.animator.SetTrigger("Get");
+        MainUI.Instance.CurrentWeaponChanged(currentGun.gunName);
     }
 }

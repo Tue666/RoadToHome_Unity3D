@@ -1,9 +1,10 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class Target : MonoBehaviour
 {
+    [SerializeField] private float _damage = 20f;
     [SerializeField] private int maxLevel = 5;
     [SerializeField] private float evolutionSpeed = 20f;
     [SerializeField] private float _summonRatePercent = 0f;
@@ -21,8 +22,13 @@ public class Target : MonoBehaviour
     private Animator _animator;
     private Movement movement;
     private AutoSpawner autoSpawner;
-    private Text nameBar;
+    private TMP_Text nameBar;
 
+    public float damage
+    {
+        get { return _damage; }
+        set { _damage = value; }
+    }
     public bool isDie
     {
         get { return _isDie; }
@@ -55,7 +61,7 @@ public class Target : MonoBehaviour
         InitializeIfNecessary();
         movement = GetComponent<Movement>();
         _animator = GetComponent<Animator>();
-        nameBar = GetComponentInChildren<Text>();
+        nameBar = GetComponentInChildren<TMP_Text>();
         UpdateStats();
         StartCoroutine(Evolution(evolutionSpeed));
     }
@@ -65,17 +71,17 @@ public class Target : MonoBehaviour
     {
         if (isChasing)
         {
-            float distance = Vector3.Distance(transform.position, movement.player.position);
+            float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
             movement.ChaseThePlayer(distance);
         }
     }
 
     void UpdateStats()
     {
+        _damage += currentLevel * 5;
         maxExp = (currentLevel + 2) * 300;
         health += currentLevel * health;
         defense += currentLevel * 5;
-        movement.damage += currentLevel * 5;
         movement.maxSpeed += (currentLevel - (currentLevel / 2f));
         movement.detectRange += currentLevel;
         float scale = (currentLevel * 0.2f) - 0.2f;

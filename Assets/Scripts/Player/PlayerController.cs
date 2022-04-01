@@ -2,36 +2,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private Transform playerCamera = null;
     [SerializeField] private CharacterController controller = null;
 
     private float cameraVertical = 0f;
     private float cameraSensitivity = 70f;
     private float gravity = -2f;
     private float velocity = 0f;
-    private float jumpHeight = 0.2f;
-    private bool lockCursor = true;
+    private float jumpHeight = 0.2f;   
     private bool isBreathing = false;
     private bool isRunning = false;
     private bool isWalking = false;
-    private float runningStaminaCost = 2f;
-    private float walkingStaminaCost = 1f;
-    private float staminaRestore = 2f;
+    private float runningStaminaCost = 0.5f;
+    private float walkingStaminaCost = 0.2f;
+    private float staminaRestore = 1f;
 
     void InitializeIfNecessary()
     {
         if (controller == null) controller = GetComponent<CharacterController>();
-        if (playerCamera == null) playerCamera = GameObject.FindWithTag("Camera Look").transform;
     }
 
     // Start is called before the first frame update
     void Start()
     {
         InitializeIfNecessary();
-        if (lockCursor)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-        }
     }
 
     // Update is called once per frame
@@ -50,7 +43,7 @@ public class PlayerController : MonoBehaviour
         // Vertical lock
         cameraVertical -= mouseY;
         cameraVertical = Mathf.Clamp(cameraVertical, -90f, 90f);
-        playerCamera.localEulerAngles = Vector3.right * cameraVertical;
+        PlayerManager.Instance.cameraLook.transform.localEulerAngles = Vector3.right * cameraVertical;
         // Horizontal lock
         transform.Rotate(Vector3.up * mouseX);
     }
@@ -92,7 +85,7 @@ public class PlayerController : MonoBehaviour
             {
                 isRunning = true;
                 PlayerManager.Instance.movementSpeed = 6f + PlayerManager.Instance.movementPlus;
-                PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost);
+                PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost, new WaitForSeconds(0.1f));
                 WeaponManager.currentAnimator.SetBool("Running", true);
             }
             return;
@@ -109,7 +102,7 @@ public class PlayerController : MonoBehaviour
             {
                 isWalking = true;
                 PlayerManager.Instance.movementSpeed = 2f + PlayerManager.Instance.movementPlus;
-                PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost);
+                PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost, new WaitForSeconds(0.1f));
                 WeaponManager.currentAnimator.SetBool("Walking", true);
             }
             return;
@@ -118,15 +111,15 @@ public class PlayerController : MonoBehaviour
         {
             isWalking = false;
             PlayerManager.Instance.movementSpeed = 1f + PlayerManager.Instance.movementPlus;
-            PlayerManager.Instance.StartStaminaDrop(staminaRestore);
+            PlayerManager.Instance.StartStaminaDrop(staminaRestore, new WaitForSeconds(0.1f));
             WeaponManager.currentAnimator.SetBool("Walking", false);
         }
     }
 
     void StopMovement()
     {
-        PlayerManager.Instance.movementSpeed = 1f + PlayerManager.Instance.movementPlus;
-        PlayerManager.Instance.StartStaminaDrop(staminaRestore);
+        PlayerManager.Instance.movementSpeed = 0.5f;
+        PlayerManager.Instance.StartStaminaDrop(staminaRestore, new WaitForSeconds(0.1f));
         WeaponManager.currentAnimator.SetBool("Running", false);
         WeaponManager.currentAnimator.SetBool("Walking", false);
     }

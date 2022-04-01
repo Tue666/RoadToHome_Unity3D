@@ -1,10 +1,12 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
+    public GameObject player = null;
+    public GameObject cameraLook = null;
+    public GameObject cameraRecoil = null;
 
     private int maxLevel = 30;
     private int currentLevel = 1;
@@ -13,26 +15,19 @@ public class PlayerManager : MonoBehaviour
     private float maxStamina = 100f;
     [HideInInspector] public float stamina = 100f;
     private float defense = 6f;
-    private int maxExp = 900;
-    private int currentExp = 0;
+    private float maxExp = 900f;
+    private float currentExp = 0f;
     [HideInInspector] public float movementSpeed = 1f;
     [HideInInspector] public float movementPlus = 0f;
 
-    // UI
-    public Text expBar;
-    public Text levelBar;
-    public GameObject bloodScreen;
-    public GameObject directionIndicator;
-    public Image healthBar;
-    public Image healthDrop;
-    public Image staminaBar;
-
     private IEnumerator staminaDropCoroutine;
 
-    private WaitForSeconds waitStaminaDrop = new WaitForSeconds(0.5f);
-    private WaitForSeconds waitShowDirection = new WaitForSeconds(1f);
-    private WaitForSeconds waitShowBloodScreen = new WaitForSeconds(1f);
-    private WaitForSeconds waitHealthDrop = new WaitForSeconds(0.4f);
+    void InitializeIfNecessary()
+    {
+        if (player == null) player = GameObject.FindWithTag("Player");
+        if (cameraLook == null) cameraLook = GameObject.FindWithTag("Camera Look");
+        if (cameraRecoil == null) cameraRecoil = GameObject.FindWithTag("Camera Recoil");
+    }
 
     void Awake()
     {
@@ -45,19 +40,21 @@ public class PlayerManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        levelBar.text = "LV." + currentLevel;
-        expBar.text = currentExp + " / " + maxExp;
+        InitializeIfNecessary();
+        MainUI.Instance.ExpChanged(currentExp, maxExp);
+        MainUI.Instance.UpdateExpBar(currentExp / maxExp);
+        MainUI.Instance.LevelChanged(currentLevel);
     }
 
-    public void StartStaminaDrop(float amount)
+    public void StartStaminaDrop(float amount, WaitForSeconds waitStaminaDrop)
     {
         if (staminaDropCoroutine != null)
             StopCoroutine(staminaDropCoroutine);
-        staminaDropCoroutine = StaminaDrop(amount);
+        staminaDropCoroutine = StaminaDrop(amount, waitStaminaDrop);
         StartCoroutine(staminaDropCoroutine);
     }
 
-    IEnumerator StaminaDrop(float amount)
+    IEnumerator StaminaDrop(float amount, WaitForSeconds waitStaminaDrop)
     {
         while (true)
         {
@@ -72,7 +69,7 @@ public class PlayerManager : MonoBehaviour
                 yield break;
             }
             stamina += amount;
-            staminaBar.fillAmount = stamina / maxStamina;
+            MainUI.Instance.UpdateStaminaBar(stamina / maxStamina);
             yield return waitStaminaDrop;
         }
     }
@@ -103,15 +100,16 @@ public class PlayerManager : MonoBehaviour
     {
         if (currentLevel >= maxLevel) return;
         currentExp += (65 - (enemyLevel * 2));
-        int diff = maxExp - currentExp;
+        float diff = maxExp - currentExp;
         if (diff <= 0)
         {
             currentLevel++;
             currentExp = Mathf.Abs(diff);
             LevelUp();
-            levelBar.text = "LV." + currentLevel;
+            MainUI.Instance.LevelChanged(currentLevel);
         }
-        expBar.text = currentExp + " / " + maxExp;
+        MainUI.Instance.ExpChanged(currentExp, maxExp);
+        MainUI.Instance.UpdateExpBar(currentExp / maxExp);
     }
 
     public void TakeDamage(float amount, GameObject attacker)
@@ -123,58 +121,16 @@ public class PlayerManager : MonoBehaviour
             return;
         }
         health -= (amount - defense);
-        healthBar.fillAmount = health / maxHealth;
+        MainUI.Instance.UpdateHealthBar(health / maxHealth);
         AudioManager.Instance.PlayEffect("PLAYER", "Player Take Damage");
-        float dropTime = 0f;
-        Transform cameraShake = GameObject.FindWithTag("Camera Recoil").transform;
-        StartCoroutine(ShowDirectionIndicator(attacker, cameraShake));
-        StartCoroutine(ShakeScreen(1f, cameraShake));
-        StartCoroutine(ShowBloodScreen());
-        StartCoroutine(UpdateHealthDrop(dropTime));
+        Transform cameraShake = cameraRecoil.transform;
+        StartCoroutine(MainUI.Instance.ShowDirectionIndicator(attacker, cameraShake));
+        StartCoroutine(MainUI.Instance.ShakeScreen(1f, cameraShake));
+        StartCoroutine(MainUI.Instance.ShowBloodScreen());
+        StartCoroutine(MainUI.Instance.UpdateHealthDrop());
         if (health <= 0)
         {
             Debug.Log("Dead!");
-        }
-    }
-
-    IEnumerator ShowDirectionIndicator(GameObject attacker, Transform cameraShake)
-    {
-        Vector3 playerDirection = cameraShake.forward;
-        Vector3 enemyDirection = attacker.transform.position - cameraShake.position;
-        int sign = Vector3.Cross(playerDirection, enemyDirection).z < 0 ? -1 : 1;
-        float angle = Vector3.Angle(playerDirection, enemyDirection) * sign;
-        directionIndicator.SetActive(true);
-        directionIndicator.GetComponent<RectTransform>().rotation = Quaternion.AngleAxis(angle, Vector3.back);
-        yield return waitShowDirection;
-        directionIndicator.SetActive(false);
-    }
-
-    IEnumerator ShakeScreen(float duration, Transform cameraShake)
-    {
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            cameraShake.localPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        cameraShake.localPosition = Vector3.zero;
-    }
-
-    IEnumerator ShowBloodScreen()
-    {
-        bloodScreen.SetActive(true);
-        yield return waitShowBloodScreen;
-        bloodScreen.SetActive(false);
-    }
-
-    IEnumerator UpdateHealthDrop(float dropTime)
-    {
-        while (healthBar.fillAmount < healthDrop.fillAmount)
-        {
-            healthDrop.fillAmount = Mathf.Lerp(healthDrop.fillAmount, healthBar.fillAmount, dropTime);
-            dropTime += Time.deltaTime * 5f;
-            yield return waitHealthDrop;
         }
     }
 }

@@ -4,8 +4,6 @@ using UnityEngine.AI;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private Transform _player;
-    [SerializeField] private float _damage = 20f;
     [SerializeField] private float _minSpeed = 0.5f;
     [SerializeField] private float _maxSpeed = 3.5f;
     [SerializeField] private float attackRange = 3f;
@@ -16,18 +14,13 @@ public class Movement : MonoBehaviour
     private bool isDectecting = true;
     private bool isDetectClip = false;
     private float escapeRange = 1f;
-    private float nearEnemiesChaseRange = 30f;
+    private float nearEnemiesChaseRange = 50f;
     private float mutableDetectRange;
     private float speed = 0.5f;
     private float nextAttackTime = 0f;
     private NavMeshAgent _agent;
     private Target target;
 
-    public float damage
-    {
-        get { return _damage; }
-        set { _damage = value; }
-    }
     public float minSpeed
     {
         get { return _minSpeed; }
@@ -43,26 +36,15 @@ public class Movement : MonoBehaviour
         get { return _detectRange; }
         set { _detectRange = value; }
     }
-    public Transform player
-    {
-        get { return _player; }
-        set { _player = value; }
-    }
     public NavMeshAgent agent
     {
         get { return _agent; }
         set { _agent = value; }
     }
 
-    void InitializeIfNecessary()
-    {
-        if (_player == null) _player = GameObject.FindWithTag("Player").transform;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
-        InitializeIfNecessary();
         target = GetComponent<Target>();
         _agent = GetComponent<NavMeshAgent>();
         _agent.stoppingDistance = attackRange;
@@ -97,7 +79,7 @@ public class Movement : MonoBehaviour
 
     void DetectPlayer()
     {
-        float distance = Vector3.Distance(transform.position, _player.position);
+        float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
         if ((!isDectecting && distance <= mutableDetectRange)) // Detected player
         {
             mutableDetectRange = _detectRange * 2.5f + escapeRange;
@@ -140,18 +122,18 @@ public class Movement : MonoBehaviour
         }
         if (!target.isDie)
         {
-            if (Vector3.Distance(transform.position, _player.position) <= _agent.stoppingDistance)
+            if (Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position) <= _agent.stoppingDistance)
             {
                 if (Time.time >= nextAttackTime)
                 {
                     nextAttackTime = Time.time + attackRate;
                     target.animator.SetTrigger("Attack");
-                    PlayerManager.Instance.TakeDamage(_damage, gameObject);
+                    PlayerManager.Instance.TakeDamage(target.damage, gameObject);
                 }
             }
             target.animator.SetFloat("Speed", speed);
             _agent.speed = speed;
-            _agent.SetDestination(_player.position);
+            _agent.SetDestination(PlayerManager.Instance.player.transform.position);
         }
         else _agent.isStopped = true;
     }

@@ -15,7 +15,6 @@ public class Shoot : MonoBehaviour
     [SerializeField] private int maxAmmo = 30;
     [SerializeField] private float reloadTime = 2.6f;
     [SerializeField] private AudioClip reloadClip;
-    [SerializeField] private WeaponBar weaponBar;
     [SerializeField] private SpaceBag spaceBag;
 
     private float nextAttackTime = 0f;
@@ -35,22 +34,12 @@ public class Shoot : MonoBehaviour
 
     void OnEnable()
     {
-        if (weaponBar == null)
-        {
-            Debug.Log("Call weapon bar");
-            weaponBar = gameObject.GetComponent<WeaponBar>();
-        }
         if (spaceBag == null)
         {
             Debug.Log("Call space bag");
             spaceBag = GameObject.FindWithTag("Space Bag").GetComponent<SpaceBag>();
         }
         isReloading = false;
-        weaponBar.UpdateIconWeapon(icon);
-        weaponBar.noMagazine = false; // Reset color magazine
-        weaponBar.UpdateMagazine(currentAmmo);
-        weaponBar.noRemaining = false; // Resr color reamining ammo
-        weaponBar.UpdateRemainingAmmo(spaceBag.GetAmmo(ammoType));
     }
 
     // Update is called once per frame
@@ -91,8 +80,6 @@ public class Shoot : MonoBehaviour
             spaceBag.SetAmmo(ammoType, (maxAmmo - currentAmmo) * -1);
             currentAmmo = maxAmmo;
         }
-        weaponBar.UpdateMagazine(currentAmmo);
-        weaponBar.UpdateRemainingAmmo(spaceBag.GetAmmo(ammoType));
         isReloading = false;
     }
 
@@ -102,7 +89,6 @@ public class Shoot : MonoBehaviour
         audioSource.clip = shotClip;
         audioSource.Play();
         currentAmmo--;
-        weaponBar.UpdateMagazine(currentAmmo);
         muzzleFlash.Play();
         TrailRenderer bullet = Instantiate(trail, barrel.position, barrel.rotation);
         bullet.AddPosition(barrel.position);
