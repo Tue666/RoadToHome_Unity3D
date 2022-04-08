@@ -9,6 +9,7 @@ public class Weapon
     public string weaponName;
     public Image weaponIcon;
     public TMP_Text currentAmmo;
+    public TMP_Text remainingAmmo;
 }
 
 public class MainUI : MonoBehaviour
@@ -28,8 +29,16 @@ public class MainUI : MonoBehaviour
     // Take Damage Screen
     public GameObject bloodScreen;
     public GameObject directionIndicator;
+    // Potions
+    public Image potionCountdownIconOne;
+    public Image potionCountdownIconTwo;
 
     private int currentWeaponIndex;
+
+    private int potionCountdownTimeOne = 10;
+    private int potionCountdownTimeTwo = 10;
+
+    private WaitForSeconds waitCountdownPotion = new WaitForSeconds(1f);
 
     private WaitForSeconds waitShowBloodScreen = new WaitForSeconds(1f);
     private WaitForSeconds waitShowDirection = new WaitForSeconds(1f);
@@ -46,6 +55,7 @@ public class MainUI : MonoBehaviour
     void HandleNoAmmoColor(int currentWeaponIndex)
     {
         weapons[currentWeaponIndex].currentAmmo.color = weapons[currentWeaponIndex].currentAmmo.text == "0" ? Color.red : Color.white;
+        weapons[currentWeaponIndex].remainingAmmo.color = weapons[currentWeaponIndex].remainingAmmo.text == "0" ? Color.red : Color.white;
     }
 
     public void InitMainWeaponBar(Gun[] guns, Gun currentGun)
@@ -66,6 +76,7 @@ public class MainUI : MonoBehaviour
             weapons[index].weaponName = gun.gunName;
             weapons[index].weaponIcon.sprite = gun.gunIcon;
             weapons[index].currentAmmo.text = gun.currentAmmoCount.ToString();
+            weapons[index].remainingAmmo.text = InventoryManager.Instance.GetItem(gun.ammo).quantity.ToString();
             HandleNoAmmoColor(index);
             index++;
         }
@@ -97,6 +108,12 @@ public class MainUI : MonoBehaviour
     public void CurrentAmmoChanged(int newValue)
     {
         weapons[currentWeaponIndex].currentAmmo.text = newValue.ToString();
+        HandleNoAmmoColor(currentWeaponIndex);
+    }
+
+    public void RemainingAmmoChanged(int newValue)
+    {
+        weapons[currentWeaponIndex].remainingAmmo.text = newValue.ToString();
         HandleNoAmmoColor(currentWeaponIndex);
     }
 
@@ -165,5 +182,37 @@ public class MainUI : MonoBehaviour
     public void UpdateExpBar(float fillAmount)
     {
         expBar.fillAmount = fillAmount;
+    }
+
+    public IEnumerator UsePotion(System.Action<bool> isUsing, int potionSlot)
+    {
+        isUsing(true);
+        Image potionCDIcon = null;
+        int CDTime = 0;
+        switch (potionSlot)
+        {
+            case 1:
+                {
+                    potionCDIcon = potionCountdownIconOne;
+                    CDTime = potionCountdownTimeOne;
+                }
+                break;
+            case 2:
+                {
+                    potionCDIcon = potionCountdownIconTwo;
+                    CDTime = potionCountdownTimeTwo;
+                }
+                break;
+            default:
+                break;
+        }
+        int remaining = CDTime;
+        while (remaining >= 0)
+        {
+            potionCDIcon.fillAmount = Mathf.InverseLerp(0, CDTime, remaining);
+            remaining--;
+            yield return waitCountdownPotion;
+        }
+        isUsing(false);
     }
 }

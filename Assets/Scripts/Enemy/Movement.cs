@@ -4,28 +4,20 @@ using UnityEngine.AI;
 
 public class Movement : MonoBehaviour
 {
-    [SerializeField] private float _minSpeed = 0.5f;
+    [SerializeField] private EnemySO enemy;
+
+    [SerializeField] private float minSpeed = 0.5f;
     [SerializeField] private float _maxSpeed = 3.5f;
-    [SerializeField] private float attackRange = 3f;
     [SerializeField] private float _detectRange = 10f;
-    [SerializeField] private float attackRate = 3f;
-    [SerializeField] private float wanderRange = 50f;
 
     private bool isDectecting = true;
     private bool isDetectClip = false;
-    private float escapeRange = 1f;
-    private float nearEnemiesChaseRange = 50f;
     private float mutableDetectRange;
     private float speed = 0.5f;
     private float nextAttackTime = 0f;
     private NavMeshAgent _agent;
     private Target target;
 
-    public float minSpeed
-    {
-        get { return _minSpeed; }
-        set { _minSpeed = value; }
-    }
     public float maxSpeed
     {
         get { return _maxSpeed; }
@@ -47,7 +39,7 @@ public class Movement : MonoBehaviour
     {
         target = GetComponent<Target>();
         _agent = GetComponent<NavMeshAgent>();
-        _agent.stoppingDistance = attackRange;
+        _agent.stoppingDistance = enemy.attackRange;
         mutableDetectRange = _detectRange;
         StartCoroutine(RandomSpeed(4/speed));
     }
@@ -67,9 +59,9 @@ public class Movement : MonoBehaviour
         target.isChasing = false;
         while (true)
         {
-            Vector3 randomPosition = Random.insideUnitSphere * Random.Range(-wanderRange, wanderRange);
+            Vector3 randomPosition = Random.insideUnitSphere * Random.Range(-enemy.wanderRange, enemy.wanderRange);
             randomPosition += transform.position;
-            if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, wanderRange, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, enemy.wanderRange, NavMesh.AllAreas))
             {
                 _agent.SetDestination(hit.position);
             }
@@ -82,9 +74,14 @@ public class Movement : MonoBehaviour
         float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
         if ((!isDectecting && distance <= mutableDetectRange)) // Detected player
         {
-            mutableDetectRange = _detectRange * 2.5f + escapeRange;
+            mutableDetectRange = _detectRange * 2.5f + enemy.escapeRange;
             if (!isDetectClip)
             {
+                SystemWindowManager.Instance.ShowWindowSystem(
+                    "DANGER",
+                    "Monsters detected and started chasing!",
+                    "TOP-RIGHT"
+                );
                 AudioManager.Instance.PlayEffect("ENEMY", "Enemy Detect");
                 isDetectClip = true;
                 NearEnemiesChaseThePlayer();
@@ -100,7 +97,7 @@ public class Movement : MonoBehaviour
 
     void NearEnemiesChaseThePlayer()
     {
-        Collider[] nearEnemies = Physics.OverlapSphere(transform.position, nearEnemiesChaseRange);
+        Collider[] nearEnemies = Physics.OverlapSphere(transform.position, enemy.nearEnemiesChaseRange);
         foreach (Collider enemy in nearEnemies)
         {
             GameObject enemyObject = enemy.gameObject;
@@ -114,8 +111,8 @@ public class Movement : MonoBehaviour
 
     public void ChaseThePlayer(float distance)
     {
-        if (target.isChasing) mutableDetectRange = _detectRange * 2 + escapeRange;
-        if (mutableDetectRange - distance < escapeRange)
+        if (target.isChasing) mutableDetectRange = _detectRange * 2 + enemy.escapeRange;
+        if (mutableDetectRange - distance < enemy.escapeRange)
         {
             isDectecting = true;
             return;
@@ -126,7 +123,7 @@ public class Movement : MonoBehaviour
             {
                 if (Time.time >= nextAttackTime)
                 {
-                    nextAttackTime = Time.time + attackRate;
+                    nextAttackTime = Time.time + enemy.attackRate;
                     target.animator.SetTrigger("Attack");
                     PlayerManager.Instance.TakeDamage(target.damage, gameObject);
                 }
@@ -142,7 +139,7 @@ public class Movement : MonoBehaviour
     {
         while (speed != 0)
         {
-            speed = Random.Range(_minSpeed, _maxSpeed);
+            speed = Random.Range(minSpeed, _maxSpeed);
             yield return new WaitForSeconds(randomTime);
         }
     }

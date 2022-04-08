@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    // For render UI
-    public Sprite gunIcon;
-
+    public ItemSO ammo;
     public string gunName;
+    public Sprite gunIcon;
     public int damage = 20;
     public int ammoType = 0;
     public int currentAmmoCount = 0;

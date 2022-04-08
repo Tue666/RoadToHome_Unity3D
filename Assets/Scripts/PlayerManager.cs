@@ -5,8 +5,8 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
     public GameObject player = null;
-    public GameObject cameraLook = null;
-    public GameObject cameraRecoil = null;
+    public Camera cameraLook = null;
+    public Camera cameraRecoil = null;
 
     private int maxLevel = 30;
     private int currentLevel = 1;
@@ -25,8 +25,8 @@ public class PlayerManager : MonoBehaviour
     void InitializeIfNecessary()
     {
         if (player == null) player = GameObject.FindWithTag("Player");
-        if (cameraLook == null) cameraLook = GameObject.FindWithTag("Camera Look");
-        if (cameraRecoil == null) cameraRecoil = GameObject.FindWithTag("Camera Recoil");
+        if (cameraLook == null) cameraLook = GameObject.FindWithTag("Camera Look").GetComponent<Camera>();
+        if (cameraRecoil == null) cameraRecoil = GameObject.FindWithTag("Camera Recoil").GetComponent<Camera>();
     }
 
     void Awake()

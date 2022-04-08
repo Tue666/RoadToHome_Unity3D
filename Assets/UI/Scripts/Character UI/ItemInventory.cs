@@ -4,26 +4,26 @@ using UnityEngine.EventSystems;
 
 public class ItemInventory : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    private Image potIcon;
+    private Image slotBackground;
 
     // Start is called before the first frame update
     void Start()
     {
-        potIcon = gameObject.GetComponent<Image>();
+        slotBackground = gameObject.GetComponent<Image>();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Color color = potIcon.color;
+        Color color = slotBackground.color;
         color.a = 0.8f;
-        potIcon.color = color;
-        AudioManager.Instance.PlayEffect("PLAYER", "Hover Item Iventory");
+        slotBackground.color = color;
+        AudioManager.Instance.PlayEffect("PLAYER", "Hover Item");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Color color = potIcon.color;
+        Color color = slotBackground.color;
         color.a = 1f;
-        potIcon.color = color;
+        slotBackground.color = color;
     }
 }

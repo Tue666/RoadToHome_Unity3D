@@ -4,15 +4,12 @@ using TMPro;
 
 public class Target : MonoBehaviour
 {
-    [SerializeField] private float _damage = 20f;
-    [SerializeField] private int maxLevel = 5;
-    [SerializeField] private float evolutionSpeed = 20f;
-    [SerializeField] private float _summonRatePercent = 0f;
+    [SerializeField] private EnemySO enemy;
+    [SerializeField] private DropTableSO dropTable;
+
+    [SerializeField] private float _damage;
     [SerializeField] private float health = 50f;
     [SerializeField] private float defense = 5f;
-    [SerializeField] private GameObject takeDamageEffect;
-    [SerializeField] private GameObject defenseEffect;
-    [SerializeField] private GameObject evolutionEffect;
 
     private bool _isDie = false;
     private bool _isChasing = false;
@@ -39,11 +36,6 @@ public class Target : MonoBehaviour
         get { return _isChasing; }
         set { _isChasing = value; }
     }
-    public float summonRatePercent
-    {
-        get { return _summonRatePercent; }
-        set { _summonRatePercent = value; }
-    }
     public Animator animator
     {
         get { return _animator; }
@@ -63,13 +55,13 @@ public class Target : MonoBehaviour
         _animator = GetComponent<Animator>();
         nameBar = GetComponentInChildren<TMP_Text>();
         UpdateStats();
-        StartCoroutine(Evolution(evolutionSpeed));
+        StartCoroutine(Evolution(enemy.evolutionSpeed));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isChasing)
+        if (_isChasing)
         {
             float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
             movement.ChaseThePlayer(distance);
@@ -93,20 +85,20 @@ public class Target : MonoBehaviour
     {
         if (!_isDie)
         {
-            isChasing = true;
+            _isChasing = true;
+
             if (Helpers.HasParameter("Take Damage", _animator) && !Helpers.IsAnimatorPlayingAny(_animator))
-            {
                 _animator.SetTrigger("Take Damage");
-            }
+
             float dameTaken = amount - defense;
             if (dameTaken <= 0)
             {
-                GameObject defenseObject = Instantiate(defenseEffect, point, Quaternion.identity);
+                GameObject defenseObject = Instantiate(enemy.defenseEffect, point, Quaternion.identity);
                 Destroy(defenseObject, 1f);
             }
             else
             {
-                GameObject bloodObject = Instantiate(takeDamageEffect, point, Random.rotation);
+                GameObject bloodObject = Instantiate(enemy.takeDamageEffect, point, Random.rotation);
                 Destroy(bloodObject, 0.3f);
                 health -= (amount - defense);
             }
@@ -126,11 +118,20 @@ public class Target : MonoBehaviour
         int currentIndex = autoSpawner.spawnIndex;
         autoSpawner.spawnIndex--;
         if (currentIndex == autoSpawner.spawnNumber) autoSpawner.ReSpawn();
+        Drop();
+    }
+
+    void Drop()
+    {
+        if (dropTable == null) return;
+        GameObject dropObject = Instantiate(enemy.dropEffect, transform.position, Quaternion.identity);
+        dropObject.GetComponent<GenerateDropItems>().InitializeDropTable(dropTable);
+        Destroy(dropObject, enemy.dropItemsTime);
     }
 
     IEnumerator Evolution(float evolutionSpeed)
     {
-        while (currentLevel < maxLevel)
+        while (currentLevel < enemy.maxLevel)
         {
             currentExp += (20 - currentLevel);
             int diff = maxExp - currentExp;
@@ -141,10 +142,11 @@ public class Target : MonoBehaviour
                 UpdateStats();
                 movement.agent.isStopped = true;
                 _animator.SetBool("Evolution", true);
-                Instantiate(evolutionEffect, transform.position, Quaternion.AngleAxis(-90f, Vector3.right));
+                GameObject evolutionObject = Instantiate(enemy.evolutionEffect, transform.position, Quaternion.AngleAxis(-90f, Vector3.right));
                 yield return new WaitForSeconds(12f);
                 _animator.SetBool("Evolution", false);
                 movement.agent.isStopped = false;
+                Destroy(evolutionObject);
             }
             yield return new WaitForSeconds(evolutionSpeed + Random.Range(0, 10));
         }

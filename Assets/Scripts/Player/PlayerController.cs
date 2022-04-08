@@ -30,7 +30,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateCameraLook();
+        if (Cursor.lockState == CursorLockMode.Locked)
+            UpdateCameraLook();
         UpdateMovement();
     }
 
@@ -126,11 +127,16 @@ public class PlayerController : MonoBehaviour
 
     void Breathing()
     {
-        // Start breath when stamine less than 30
-        if (PlayerManager.Instance.stamina <= 30)
+        // Start breath when stamine less than 25
+        if (PlayerManager.Instance.stamina <= 25)
         {
             if (!isBreathing)
             {
+                SystemWindowManager.Instance.ShowWindowSystem(
+                    "WARNING",
+                    "Player about to run out of stamina, take a break!",
+                    "TOP-RIGHT"
+                );
                 isBreathing = true;
                 AudioManager.Instance.PlayMusic("Player Breath");
             }
@@ -140,7 +146,7 @@ public class PlayerController : MonoBehaviour
             if (isBreathing)
             {
                 isBreathing = false;
-                AudioManager.Instance.StopMusic("Player Breath");
+                AudioManager.Instance.StopMusic();
             }
         }
     }

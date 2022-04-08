@@ -4,12 +4,11 @@ using UnityEngine;
 public class AutoSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject[] spawnPoints;
-    [SerializeField] private GameObject[] enemies;
+    [SerializeField] private EnemySO[] enemies;
     [SerializeField] private int _spawnNumber = 10;
 
     private int _spawnIndex = 1;
     private float spawnTime = 5f;
-    private float[] summonRates;
     private float totalSummonRate;
 
     public int spawnNumber
@@ -33,13 +32,9 @@ public class AutoSpawner : MonoBehaviour
     {
         InitializeIfNecessary();
         int i = 0;
-        summonRates = new float[enemies.Length];
-        foreach (GameObject enemy in enemies)
+        foreach (EnemySO enemy in enemies)
         {
-            Target target = enemy.GetComponent<Target>();
-            float rate = target.summonRatePercent / 100;
-            summonRates[i] = rate;
-            totalSummonRate += rate;
+            totalSummonRate += enemy.summonRatePercent / 100;
             i++;
         }
         ReSpawn();
@@ -53,18 +48,16 @@ public class AutoSpawner : MonoBehaviour
             float currentRate;
             float nextRate = 0;
             float currentTotal = 0;
-            int i = 0;
-            foreach (GameObject enemy in enemies)
+            foreach (EnemySO enemy in enemies)
             {
                 currentRate = nextRate;
-                nextRate = summonRates[i];
+                nextRate = enemy.summonRatePercent / 100;
                 currentTotal += nextRate;
                 if (randomSummonRate >= currentRate && (randomSummonRate < nextRate || randomSummonRate < currentTotal))
                 {
                     int randomPosition = Random.Range(0, spawnPoints.Length);
-                    Instantiate(enemy, spawnPoints[randomPosition].transform.position, Quaternion.identity);
+                    Instantiate(enemy.enemyPrefab, spawnPoints[randomPosition].transform.position, Quaternion.identity);
                     _spawnIndex++;
-                    i++;
                     break;
                 }
             }

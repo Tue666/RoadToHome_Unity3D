@@ -2007,12 +2007,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a7bfe60153f4394489c78234e992caa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minSpeed: 0.5
+  enemy: {fileID: 11400000, guid: c2e25186fe4ff73408a2b18702f96e1d, type: 2}
+  minSpeed: 0.5
   _maxSpeed: 2.5
-  attackRange: 3.5
   _detectRange: 10
-  attackRate: 3
-  wanderRange: 500
 --- !u!114 &1788449388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2025,15 +2023,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d75ec9425c56e846a0ae88bcde1c644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemy: {fileID: 11400000, guid: c2e25186fe4ff73408a2b18702f96e1d, type: 2}
+  dropTable: {fileID: 11400000, guid: fd223183fe2a8944eb7ca64cbc03c0bf, type: 2}
   _damage: 20
-  maxLevel: 5
-  evolutionSpeed: 20
-  _summonRatePercent: 80
   health: 50
   defense: 5
-  takeDamageEffect: {fileID: 1000010191825552, guid: 83e55d3418297934fab882559d009285, type: 3}
-  defenseEffect: {fileID: 100004, guid: 240a0017cdd7934499c19f014aabe974, type: 3}
-  evolutionEffect: {fileID: 1006615274023270, guid: 9092d3ff769a86f499938c5917007ce9, type: 3}
 --- !u!195 &-2441812089860447158
 NavMeshAgent:
   m_ObjectHideFlags: 0

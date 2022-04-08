@@ -26,15 +26,15 @@ public class WeaponManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            WeaponChange("GUN", "Rifle 05");
+            WeaponChange("GUN", "Rifle 03");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            WeaponChange("GUN", "Rifle 03");
+            WeaponChange("GUN", "Rifle 05");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            WeaponChange("GUN", "Rifle 02");
+            //WeaponChange("GUN", "Rifle 01");
         }
     }
 
@@ -44,7 +44,12 @@ public class WeaponManager : MonoBehaviour
         {
             case "GUN":
                 if (Helpers.ContainsKeyButValueNotNull(gunDictionary, name))
+                {
                     gunController.GunChange(gunDictionary[name]);
+                    gunController.CancelReload();
+                    // Cancel scoped
+                    StartCoroutine(gunController.OnUnScoped());
+                }
                 break;
             default:
                 break;

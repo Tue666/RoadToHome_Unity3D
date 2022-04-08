@@ -19,6 +19,8 @@ public class GunController : MonoBehaviour
     private Vector3 currentRotation;
     private Vector3 targetRotation;
 
+    private IEnumerator reloadCoroutine;
+
     private WaitForSeconds waitScope = new WaitForSeconds(0.01f);
 
     // Start is called before the first frame update
@@ -38,10 +40,15 @@ public class GunController : MonoBehaviour
         {
             ReturnRecoil();
             if (isReloading) return;
-            if (Input.GetKeyDown(KeyCode.R) && currentGun.currentAmmoCount < currentGun.maxAmmoCount)
+            if (currentGun.currentAmmoCount <= 0 || (Input.GetKeyDown(KeyCode.R) && currentGun.currentAmmoCount < currentGun.maxAmmoCount))
             {
-                StartCoroutine(Reload());
-                return;
+                // Must have ammo for reload
+                if (InventoryManager.Instance.GetItem(currentGun.ammo).quantity > 0)
+                {
+                    reloadCoroutine = Reload();
+                    StartCoroutine(reloadCoroutine);
+                    return;
+                }
             }
 
             // Must lock cursor to do the following
@@ -79,14 +86,36 @@ public class GunController : MonoBehaviour
 
     IEnumerator Reload()
     {
+        // Turn off the scope if it's happening
+        if (isScoped) StartCoroutine(OnUnScoped());
+
         isReloading = true;
-        AudioManager.Instance.PlayEffect("WEAPON", currentGun.reloadClipName);
+        AudioManager.Instance.PlayEffect("WEAPON", currentGun.reloadClipName, true);
         currentGun.animator.SetBool("Reloading", true);
         yield return new WaitForSeconds(currentGun.reloadTime);
         currentGun.animator.SetBool("Reloading", false);
         yield return new WaitForSeconds(0.25f);
-        currentGun.currentAmmoCount = currentGun.maxAmmoCount;
+
+        int diff = currentGun.maxAmmoCount - currentGun.currentAmmoCount;
+        int remainingAmmo = InventoryManager.Instance.GetItem(currentGun.ammo).quantity;
+        if (diff >= remainingAmmo)
+        {
+            InventoryManager.Instance.EditItem(new InventoryItem(currentGun.ammo, 0));
+            currentGun.currentAmmoCount += remainingAmmo;
+        }
+        else
+        {
+            InventoryManager.Instance.EditItem(new InventoryItem(currentGun.ammo, remainingAmmo - (currentGun.maxAmmoCount - currentGun.currentAmmoCount)));
+            currentGun.currentAmmoCount = currentGun.maxAmmoCount;
+        }
         MainUI.Instance.CurrentAmmoChanged(currentGun.currentAmmoCount);
+        MainUI.Instance.RemainingAmmoChanged(InventoryManager.Instance.GetItem(currentGun.ammo).quantity);
+        isReloading = false;
+    }
+
+    public void CancelReload()
+    {
+        StopCoroutine(reloadCoroutine);
         isReloading = false;
     }
 
@@ -123,7 +152,7 @@ public class GunController : MonoBehaviour
         }
     }
 
-    IEnumerator OnUnScoped()
+    public IEnumerator OnUnScoped()
     {
         isScoped = false;
         currentGun.animator.SetBool("Scoped", false);
@@ -163,9 +192,10 @@ public class GunController : MonoBehaviour
     public void GunChange(Gun gun)
     {
         if (currentGun == gun) return;
+
         if (WeaponManager.currentWeapon != null)
             WeaponManager.currentWeapon.gameObject.SetActive(false);
-        AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change");
+        AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change", true);
         WeaponManager.currentWeapon = gun.gameObject.transform;
         WeaponManager.currentAnimator = gun.animator;
         WeaponManager.isActivating = "GUN";

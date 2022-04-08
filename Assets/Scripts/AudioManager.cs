@@ -26,14 +26,15 @@ public class EffectSound
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+
     public MusicSound[] musicSounds;
 
     public EffectSound[] weaponSounds;
     public EffectSound[] playerSounds;
     public EffectSound[] enemySounds;
-    private Dictionary<string, EffectSound> weaponSoundsDictionary = new Dictionary<string, EffectSound>();
-    private Dictionary<string, EffectSound> playerSoundsDictionary = new Dictionary<string, EffectSound>();
-    private Dictionary<string, EffectSound> enemySoundsDictionary = new Dictionary<string, EffectSound>();
+    private Dictionary<string, AudioClip> weaponSoundsDictionary = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioClip> playerSoundsDictionary = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioClip> enemySoundsDictionary = new Dictionary<string, AudioClip>();
 
     public AudioSource effectSource;
     public AudioSource musicSource;
@@ -57,17 +58,17 @@ public class AudioManager : MonoBehaviour
         foreach (EffectSound sound in weaponSounds)
         {
             if (sound != null)
-                weaponSoundsDictionary.Add(sound.name, sound);
+                weaponSoundsDictionary.Add(sound.name, sound.clip);
         }
         foreach (EffectSound sound in playerSounds)
         {
             if (sound != null)
-                playerSoundsDictionary.Add(sound.name, sound);
+                playerSoundsDictionary.Add(sound.name, sound.clip);
         }
         foreach (EffectSound sound in enemySounds)
         {
             if (sound != null)
-                enemySoundsDictionary.Add(sound.name, sound);
+                enemySoundsDictionary.Add(sound.name, sound.clip);
         }
     }
 
@@ -83,35 +84,34 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
-    public void StopMusic(string soundName)
+    public void StopMusic()
     {
-        MusicSound sound = Array.Find(musicSounds, sound => sound.name == soundName);
-        if (sound == null) return;
-        musicSource.clip = sound.clip;
-        musicSource.Stop();
+        if (musicSource.isPlaying)
+            musicSource.Stop();
     }
 
-    public void PlayEffect(string type, string soundName)
+    public void PlayEffect(string type, string soundName, bool stopSoundsBefore = false)
     {
-        EffectSound sound = null;
+        AudioClip clip = null;
         switch (type)
         {
             case "WEAPON":
                 if (Helpers.ContainsKeyButValueNotNull(weaponSoundsDictionary, soundName))
-                    sound = weaponSoundsDictionary[soundName];
+                    clip = weaponSoundsDictionary[soundName];
                 break;
             case "PLAYER":
                 if (Helpers.ContainsKeyButValueNotNull(playerSoundsDictionary, soundName))
-                    sound = playerSoundsDictionary[soundName];
+                    clip = playerSoundsDictionary[soundName];
                 break;
             case "ENEMY":
                 if (Helpers.ContainsKeyButValueNotNull(enemySoundsDictionary, soundName))
-                    sound = enemySoundsDictionary[soundName];
+                    clip = enemySoundsDictionary[soundName];
                 break;
             default:
                 break;
         }
-        if (sound == null) return;
-        effectSource.PlayOneShot(sound.clip);
+        if (clip == null) return;
+        if (stopSoundsBefore && effectSource.isPlaying) effectSource.Stop();
+        effectSource.PlayOneShot(clip);
     }
 }
