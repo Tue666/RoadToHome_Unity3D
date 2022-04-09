@@ -7,9 +7,18 @@ using TMPro;
 public class Weapon
 {
     public string weaponName;
+    public Image weaponBackground;
     public Image weaponIcon;
     public TMP_Text currentAmmo;
     public TMP_Text remainingAmmo;
+}
+
+[System.Serializable]
+public class ExtraWeapon
+{
+    public string weaponName;
+    public Image weaponBackground;
+    public Image weaponIcon;
 }
 
 public class MainUI : MonoBehaviour
@@ -18,31 +27,43 @@ public class MainUI : MonoBehaviour
 
     // Weapon Bar
     public Weapon[] weapons;
+    public ExtraWeapon extraWeapon;
+
+    private int currentWeaponIndex;
+    //------------------------------------------------------------
     // Health Bar
     public TMP_Text exp;
     public TMP_Text level;
     public Image healthBar;
     public Image healthDrop;
     public Image expBar;
+
+    private WaitForSeconds waitHealthDrop = new WaitForSeconds(0.4f);
+    //------------------------------------------------------------
     // Stamina Bar
     public Image staminaBar;
+    //------------------------------------------------------------
+    // Crosshair
+    public Transform crosshair;
+    public GameObject gunReticle;
+    public GameObject gunFocused;
+
+    private IEnumerator toggleGunReticleCoroutine;
+    //------------------------------------------------------------
     // Take Damage Screen
     public GameObject bloodScreen;
     public GameObject directionIndicator;
+
+    private WaitForSeconds waitShowBloodScreen = new WaitForSeconds(1f);
+    private WaitForSeconds waitShowDirection = new WaitForSeconds(1f);
+    //------------------------------------------------------------
     // Potions
     public Image potionCountdownIconOne;
     public Image potionCountdownIconTwo;
 
-    private int currentWeaponIndex;
-
     private int potionCountdownTimeOne = 10;
     private int potionCountdownTimeTwo = 10;
-
     private WaitForSeconds waitCountdownPotion = new WaitForSeconds(1f);
-
-    private WaitForSeconds waitShowBloodScreen = new WaitForSeconds(1f);
-    private WaitForSeconds waitShowDirection = new WaitForSeconds(1f);
-    private WaitForSeconds waitHealthDrop = new WaitForSeconds(0.4f);
 
     void Awake()
     {
@@ -52,25 +73,66 @@ public class MainUI : MonoBehaviour
             Instance = this;
     }
 
+    #region Weapon
+    public void SwitchCrosshair(string isActivating)
+    {
+        int activatingInt = isActivating == "HAND" ? 0 : 1;
+        int index = 0;
+        foreach (Transform obj in crosshair)
+        {
+            obj.gameObject.SetActive(index == activatingInt);
+            index++;
+        }
+    }
+
+    public void StartToggleGunReticleCoroutine(bool isScoped)
+    {
+        if (!isScoped && toggleGunReticleCoroutine != null)
+        {
+            StopCoroutine(toggleGunReticleCoroutine);
+            gunReticle.SetActive(false);
+            gunReticle.SetActive(true);
+        }
+        toggleGunReticleCoroutine = ToggleGunReticle(isScoped);
+        StartCoroutine(toggleGunReticleCoroutine);
+    }
+
+    IEnumerator ToggleGunReticle(bool isScoped)
+    {
+        if (isScoped)
+        {
+            Animator animator = gunReticle.GetComponent<Animator>();
+            animator.SetBool("Aiming", true);
+            yield return new WaitForSeconds(0.25f);
+            gunReticle.SetActive(false);
+        }
+        else
+            gunReticle.SetActive(true);
+    }
+
+    public void ToggleGunFocused(bool isFocusing)
+    {
+        gunFocused.SetActive(isFocusing);
+    }
+
     void HandleNoAmmoColor(int currentWeaponIndex)
     {
         weapons[currentWeaponIndex].currentAmmo.color = weapons[currentWeaponIndex].currentAmmo.text == "0" ? Color.red : Color.white;
         weapons[currentWeaponIndex].remainingAmmo.color = weapons[currentWeaponIndex].remainingAmmo.text == "0" ? Color.red : Color.white;
     }
 
-    public void InitMainWeaponBar(Gun[] guns, Gun currentGun)
+    public void InitMainWeaponBar(Gun[] guns)
     {
         int index = 0;
         foreach (Gun gun in guns)
         {
-            if (gun == currentGun)
+            if (gun.transform == WeaponManager.currentWeapon)
                 currentWeaponIndex = index;
             else
             {
-                Image slotWeaponIcon = weapons[index].weaponIcon.rectTransform.parent.GetComponent<Image>();
-                Color color = slotWeaponIcon.color;
+                Color color = weapons[index].weaponBackground.color;
                 color.a = 0.7f;
-                slotWeaponIcon.color = color;
+                weapons[index].weaponBackground.color = color;
                 weapons[index].weaponIcon.color = color;
             }
             weapons[index].weaponName = gun.gunName;
@@ -82,14 +144,34 @@ public class MainUI : MonoBehaviour
         }
     }
 
-    public void CurrentWeaponChanged(string weaponName)
+    public void InitExtraWeaponBar(Hand hand)
     {
+        if (hand.transform != WeaponManager.currentWeapon)
+        {
+            Color color = extraWeapon.weaponBackground.color;
+            color.a = 0.7f;
+            extraWeapon.weaponName = hand.handName;
+            extraWeapon.weaponBackground.color = color;
+            extraWeapon.weaponIcon.color = color;
+        }
+    }
+
+    public void CurrentWeaponChanged(string type = "", string weaponName = "")
+    {
+        Color color = extraWeapon.weaponBackground.color;
+
+        // Handle extra weapon
+        if (type == "EXTRA" && extraWeapon.weaponName.Equals(weaponName))
+            color.a = 1f;
+        else
+            color.a = 0.7f;
+        extraWeapon.weaponBackground.color = color;
+        extraWeapon.weaponIcon.color = color;
+
+        // Handle main weapons
         int index = 0;
         foreach (Weapon weapon in weapons)
         {
-            if (string.IsNullOrEmpty(weapon.weaponName)) continue;
-            Image slotWeaponIcon = weapon.weaponIcon.rectTransform.parent.GetComponent<Image>();
-            Color color = slotWeaponIcon.color;
             if (weapon.weaponName.Equals(weaponName))
             {
                 color.a = 1f;
@@ -99,7 +181,7 @@ public class MainUI : MonoBehaviour
             {
                 color.a = 0.7f;
             }
-            slotWeaponIcon.color = color;
+            weapon.weaponBackground.color = color;
             weapon.weaponIcon.color = color;
             index++;
         }
@@ -116,6 +198,13 @@ public class MainUI : MonoBehaviour
         weapons[currentWeaponIndex].remainingAmmo.text = newValue.ToString();
         HandleNoAmmoColor(currentWeaponIndex);
     }
+    #endregion
+
+    #region Status
+    public void UpdateExpBar(float fillAmount)
+    {
+        expBar.fillAmount = fillAmount;
+    }
 
     public void ExpChanged(float currentExp, float maxExp)
     {
@@ -125,37 +214,6 @@ public class MainUI : MonoBehaviour
     public void LevelChanged(float currentLevel)
     {
         level.text = currentLevel.ToString();
-    }
-
-    public IEnumerator ShowDirectionIndicator(GameObject attacker, Transform cameraShake)
-    {
-        Vector3 playerDirection = cameraShake.forward;
-        Vector3 enemyDirection = attacker.transform.position - cameraShake.position;
-        int sign = Vector3.Cross(playerDirection, enemyDirection).z < 0 ? -1 : 1;
-        float angle = Vector3.Angle(playerDirection, enemyDirection) * sign;
-        directionIndicator.SetActive(true);
-        directionIndicator.GetComponent<RectTransform>().rotation = Quaternion.AngleAxis(angle, Vector3.back);
-        yield return waitShowDirection;
-        directionIndicator.SetActive(false);
-    }
-
-    public IEnumerator ShakeScreen(float duration, Transform cameraShake)
-    {
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            cameraShake.localPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        cameraShake.localPosition = Vector3.zero;
-    }
-
-    public IEnumerator ShowBloodScreen()
-    {
-        bloodScreen.SetActive(true);
-        yield return waitShowBloodScreen;
-        bloodScreen.SetActive(false);
     }
 
     public void UpdateHealthBar(float fillAmount)
@@ -177,11 +235,6 @@ public class MainUI : MonoBehaviour
     public void UpdateStaminaBar(float fillAmount)
     {
         staminaBar.fillAmount = fillAmount;
-    }
-
-    public void UpdateExpBar(float fillAmount)
-    {
-        expBar.fillAmount = fillAmount;
     }
 
     public IEnumerator UsePotion(System.Action<bool> isUsing, int potionSlot)
@@ -215,4 +268,38 @@ public class MainUI : MonoBehaviour
         }
         isUsing(false);
     }
+    #endregion
+
+    #region Other
+    public IEnumerator ShowDirectionIndicator(GameObject attacker, Transform cameraShake)
+    {
+        Vector3 playerDirection = cameraShake.forward;
+        Vector3 enemyDirection = attacker.transform.position - cameraShake.position;
+        int sign = Vector3.Cross(playerDirection, enemyDirection).z < 0 ? -1 : 1;
+        float angle = Vector3.Angle(playerDirection, enemyDirection) * sign;
+        directionIndicator.SetActive(true);
+        directionIndicator.GetComponent<RectTransform>().rotation = Quaternion.AngleAxis(angle, Vector3.back);
+        yield return waitShowDirection;
+        directionIndicator.SetActive(false);
+    }
+
+    public IEnumerator ShakeScreen(float duration, Transform cameraShake)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            cameraShake.localPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        cameraShake.localPosition = Vector3.zero;
+    }
+
+    public IEnumerator ShowBloodScreen()
+    {
+        bloodScreen.SetActive(true);
+        yield return waitShowBloodScreen;
+        bloodScreen.SetActive(false);
+    }
+    #endregion
 }

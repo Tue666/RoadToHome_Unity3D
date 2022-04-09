@@ -3,17 +3,27 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
+    [SerializeField] private Hand[] hands;
+    [SerializeField] private HandController handController;
     [SerializeField] private Gun[] guns;
     [SerializeField] private GunController gunController;
 
+    private Dictionary<string, Hand> handDictionary = new Dictionary<string, Hand>();
     private Dictionary<string, Gun> gunDictionary = new Dictionary<string, Gun>();
+    private string previousWeaponName;
+
     public static Transform currentWeapon;
     public static Animator currentAnimator;
-    public static string isActivating = "GUN";
+    public static string isActivating = "HAND";
 
     // Start is called before the first frame update
     void Start()
     {
+        foreach (Hand hand in hands)
+        {
+            if (hand != null)
+                handDictionary.Add(hand.handName, hand);
+        }
         foreach (Gun gun in guns)
         {
             if (gun != null)
@@ -26,16 +36,38 @@ public class WeaponManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            WeaponChange("GUN", "Rifle 03");
+            PrepareWeapon("GUN", "Rifle 03");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            WeaponChange("GUN", "Rifle 05");
+            PrepareWeapon("GUN", "Rifle 05");
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            //WeaponChange("GUN", "Rifle 01");
+            PrepareWeapon("HAND", "Knife");
         }
+    }
+
+    void PrepareWeapon(string type, string name)
+    {
+        switch (isActivating)
+        {
+            case "GUN":
+                // Cancel reload if it's happening
+                gunController.CancelReload();
+                // Cancel scope if it's happening
+                StartCoroutine(gunController.OnUnScoped());
+                break;
+            default:
+                break;
+        }
+        if (previousWeaponName == name)
+        {
+            WeaponChange("HAND", "Hand");
+            return;
+        }
+        WeaponChange(type, name);
+        MainUI.Instance.SwitchCrosshair(isActivating);
     }
 
     void WeaponChange(string type, string name)
@@ -44,15 +76,15 @@ public class WeaponManager : MonoBehaviour
         {
             case "GUN":
                 if (Helpers.ContainsKeyButValueNotNull(gunDictionary, name))
-                {
                     gunController.GunChange(gunDictionary[name]);
-                    gunController.CancelReload();
-                    // Cancel scoped
-                    StartCoroutine(gunController.OnUnScoped());
-                }
+                break;
+            case "HAND":
+                if (Helpers.ContainsKeyButValueNotNull(handDictionary, name))
+                    handController.HandChange(handDictionary[name]);
                 break;
             default:
                 break;
         }
+        previousWeaponName = name;
     }
 }

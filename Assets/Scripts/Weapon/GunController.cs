@@ -6,9 +6,10 @@ public class GunController : MonoBehaviour
     [SerializeField] private Gun currentGun;
     [SerializeField] private Gun[] gunsEquiqqed;
 
-    private float nextShootingTime;
-    private bool isReloading;
     private Camera cameraFOV = null;
+    private bool isReloading;
+    private bool isFocusing;
+    private float nextShootingTime;
     private RaycastHit hit;
 
     // Scope
@@ -26,11 +27,9 @@ public class GunController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cameraFOV = PlayerManager.Instance.cameraRecoil.GetComponent<Camera>();
-        WeaponManager.currentWeapon = currentGun.gameObject.transform;
-        WeaponManager.currentAnimator = currentGun.animator;
+        cameraFOV = PlayerManager.Instance.cameraRecoil;
         normalFOV = cameraFOV.fieldOfView;
-        MainUI.Instance.InitMainWeaponBar(gunsEquiqqed, currentGun);
+        MainUI.Instance.InitMainWeaponBar(gunsEquiqqed);
     }
 
     // Update is called once per frame
@@ -54,6 +53,9 @@ public class GunController : MonoBehaviour
             // Must lock cursor to do the following
             if (Cursor.lockState == CursorLockMode.Locked)
             {
+                // Shooting
+                bool previousFocusing = isFocusing;
+                isFocusing = false;
                 if (Input.GetButton("Fire1") && Time.time >= nextShootingTime)
                 {
                     nextShootingTime = Time.time + currentGun.shootingRate;
@@ -62,6 +64,9 @@ public class GunController : MonoBehaviour
                     else
                         AudioManager.Instance.PlayEffect("WEAPON", "Out Of Ammo");
                 }
+                if (previousFocusing != isFocusing) MainUI.Instance.ToggleGunFocused(isFocusing);
+
+                // Scope
                 if (Input.GetButtonDown("Fire2") && currentGun != null)
                 {
                     StartCoroutine(OnScoped());
@@ -115,8 +120,11 @@ public class GunController : MonoBehaviour
 
     public void CancelReload()
     {
-        StopCoroutine(reloadCoroutine);
-        isReloading = false;
+        if (isReloading)
+        {
+            StopCoroutine(reloadCoroutine);
+            isReloading = false;
+        }
     }
 
     void Shooting()
@@ -135,6 +143,7 @@ public class GunController : MonoBehaviour
             if (target != null)
             {
                 target.TakeDamage(currentGun.damage, hit.point);
+                isFocusing = true;
             }
             SpawnTrail(bullet, hit.point);
         }
@@ -155,7 +164,8 @@ public class GunController : MonoBehaviour
     public IEnumerator OnUnScoped()
     {
         isScoped = false;
-        currentGun.animator.SetBool("Scoped", false);
+        currentGun.animator.SetBool("Scoped", isScoped);
+        MainUI.Instance.StartToggleGunReticleCoroutine(isScoped);
         while (cameraFOV.fieldOfView < normalFOV)
         {
             if (isScoped) yield break;
@@ -173,7 +183,8 @@ public class GunController : MonoBehaviour
     IEnumerator OnScoped()
     {
         isScoped = true;
-        currentGun.animator.SetBool("Scoped", true);
+        currentGun.animator.SetBool("Scoped", isScoped);
+        MainUI.Instance.StartToggleGunReticleCoroutine(isScoped);
         float newFOV = cameraFOV.fieldOfView - scopedFOV[currentGun.scopeEquipped];
         while (cameraFOV.fieldOfView > newFOV)
         {
@@ -191,8 +202,6 @@ public class GunController : MonoBehaviour
 
     public void GunChange(Gun gun)
     {
-        if (currentGun == gun) return;
-
         if (WeaponManager.currentWeapon != null)
             WeaponManager.currentWeapon.gameObject.SetActive(false);
         AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change", true);
@@ -202,6 +211,6 @@ public class GunController : MonoBehaviour
         currentGun = gun;
         currentGun.gameObject.SetActive(true);
         currentGun.animator.SetTrigger("Get");
-        MainUI.Instance.CurrentWeaponChanged(currentGun.gunName);
+        MainUI.Instance.CurrentWeaponChanged("MAIN", currentGun.gunName);
     }
 }

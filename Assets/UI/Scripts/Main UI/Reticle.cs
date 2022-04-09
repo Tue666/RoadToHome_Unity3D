@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class Crosshair : MonoBehaviour
+public class Reticle : MonoBehaviour
 {
     [SerializeField] private CharacterController controller;
-    [SerializeField] private RectTransform crosshair;
+    [SerializeField] private RectTransform reticle;
     [SerializeField] private float idleSize = 60f;
     [SerializeField] private float walkingSize = 75f;
     [SerializeField] private float runningSize = 100f;
@@ -14,7 +14,7 @@ public class Crosshair : MonoBehaviour
 
     void InitializeIfNecessary()
     {
-        if (crosshair == null) crosshair = gameObject.GetComponent<RectTransform>();
+        if (reticle == null) reticle = gameObject.GetComponent<RectTransform>();
         if (controller == null) controller = GameObject.FindWithTag("Player").GetComponent<CharacterController>();
     }
 
@@ -36,7 +36,7 @@ public class Crosshair : MonoBehaviour
         else if (IsRunning) currentSize = Mathf.Lerp(currentSize, runningSize, speed * Time.deltaTime);
         else if (IsWalking) currentSize = Mathf.Lerp(currentSize, walkingSize, speed * Time.deltaTime);
         else currentSize = Mathf.Lerp(currentSize, idleSize, speed * Time.deltaTime);
-        crosshair.sizeDelta = new Vector2(currentSize, currentSize);
+        reticle.sizeDelta = new Vector2(currentSize, currentSize);
     }
 
     bool IsJumping

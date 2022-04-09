@@ -12,9 +12,12 @@ public class PlayerController : MonoBehaviour
     private bool isBreathing = false;
     private bool isRunning = false;
     private bool isWalking = false;
+    private bool isStopping = false;
     private float runningStaminaCost = 0.5f;
     private float walkingStaminaCost = 0.2f;
     private float staminaRestore = 1f;
+
+    private WaitForSeconds waitStaminaDrop = new WaitForSeconds(0.1f);
 
     void InitializeIfNecessary()
     {
@@ -72,6 +75,11 @@ public class PlayerController : MonoBehaviour
 
     void HandleSpeedMovement()
     {
+        // Will stop until stamina reached 20
+        if (isStopping && PlayerManager.Instance.stamina <= 20)
+            return;
+        else
+            isStopping = false;
         if (PlayerManager.Instance.stamina <= 0)
         {
             StopMovement();
@@ -82,29 +90,28 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey("left shift"))
         {
+            WeaponManager.currentAnimator.SetBool("Running", true);
             if (!isRunning)
             {
                 isRunning = true;
                 PlayerManager.Instance.movementSpeed = 6f + PlayerManager.Instance.movementPlus;
-                PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost, new WaitForSeconds(0.1f));
-                WeaponManager.currentAnimator.SetBool("Running", true);
+                PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost, waitStaminaDrop);
             }
             return;
         }
+        if (isRunning)
+        {
+            isRunning = false;
+            WeaponManager.currentAnimator.SetBool("Running", false);
+        }
         if ((Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0))
         {
-            if (isRunning)
-            {
-                isRunning = false;
-                isWalking = false; // Reset walking
-                WeaponManager.currentAnimator.SetBool("Running", false);
-            }
+            WeaponManager.currentAnimator.SetBool("Walking", true);
             if (!isWalking)
             {
                 isWalking = true;
                 PlayerManager.Instance.movementSpeed = 2f + PlayerManager.Instance.movementPlus;
-                PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost, new WaitForSeconds(0.1f));
-                WeaponManager.currentAnimator.SetBool("Walking", true);
+                PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost, waitStaminaDrop);
             }
             return;
         }
@@ -112,17 +119,18 @@ public class PlayerController : MonoBehaviour
         {
             isWalking = false;
             PlayerManager.Instance.movementSpeed = 1f + PlayerManager.Instance.movementPlus;
-            PlayerManager.Instance.StartStaminaDrop(staminaRestore, new WaitForSeconds(0.1f));
+            PlayerManager.Instance.StartStaminaDrop(staminaRestore, waitStaminaDrop);
             WeaponManager.currentAnimator.SetBool("Walking", false);
         }
     }
 
     void StopMovement()
     {
+        isStopping = true;
         PlayerManager.Instance.movementSpeed = 0.5f;
-        PlayerManager.Instance.StartStaminaDrop(staminaRestore, new WaitForSeconds(0.1f));
         WeaponManager.currentAnimator.SetBool("Running", false);
         WeaponManager.currentAnimator.SetBool("Walking", false);
+        PlayerManager.Instance.StartStaminaDrop(staminaRestore, waitStaminaDrop);
     }
 
     void Breathing()

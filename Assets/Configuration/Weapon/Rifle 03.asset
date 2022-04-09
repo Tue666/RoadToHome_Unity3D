@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64d70123bd159ba4d80d9b6dcaecd664, type: 3}
+  m_Name: Rifle 03
+  m_EditorClassIdentifier: 
+  ammo: {fileID: 11400000, guid: e3e6207cce743974eaa16ec219c424d4, type: 2}
+  gunName: Rifle 03
+  gunIcon: {fileID: 21300000, guid: 5cce39cf79daa74479a8a5fc5bea4ff4, type: 3}
+  damage: 20
+  ammoType: 0
+  currentAmmoCount: 0
+  maxAmmoCount: 40
+  range: 100
+  shootingRate: 0.07
+  reloadTime: 2.6
+  shootingClipName: Rifle Shooting
+  reloadClipName: Rifle Reload
+  muzzleFlash: {fileID: 2096037153910562396, guid: dd2a5ffec6bfa334081baa33857a9b42, type: 3}
+  trail: {fileID: 1052799403798685696, guid: e303997d9f266584981705b7de1a4f80, type: 3}
+  barrel: {fileID: 0}
+  scopeEquipped: 0
+  zoomSpeed: 1
+  recoilX: -2.5
+  recoilY: 1.5
+  recoilReturnSpeed: 5
+  animator: {fileID: 2661947152584001366, guid: 617b4d2755b5d37499d09876d0f580fc, type: 3}
