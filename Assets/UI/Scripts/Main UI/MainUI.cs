@@ -130,10 +130,8 @@ public class MainUI : MonoBehaviour
                 currentWeaponIndex = index;
             else
             {
-                Color color = weapons[index].weaponBackground.color;
-                color.a = 0.7f;
-                weapons[index].weaponBackground.color = color;
-                weapons[index].weaponIcon.color = color;
+                CanvasGroup canvasGroup = weapons[index].weaponBackground.GetComponent<CanvasGroup>();
+                canvasGroup.alpha = 0.6f;
             }
             weapons[index].weaponName = gun.gunName;
             weapons[index].weaponIcon.sprite = gun.gunIcon;
@@ -148,41 +146,37 @@ public class MainUI : MonoBehaviour
     {
         if (hand.transform != WeaponManager.currentWeapon)
         {
-            Color color = extraWeapon.weaponBackground.color;
-            color.a = 0.7f;
+            CanvasGroup canvasGroup = extraWeapon.weaponBackground.GetComponent<CanvasGroup>();
+            canvasGroup.alpha = 0.6f;
             extraWeapon.weaponName = hand.handName;
-            extraWeapon.weaponBackground.color = color;
-            extraWeapon.weaponIcon.color = color;
         }
     }
 
     public void CurrentWeaponChanged(string type = "", string weaponName = "")
     {
-        Color color = extraWeapon.weaponBackground.color;
+        CanvasGroup extraCanvasGroup = extraWeapon.weaponBackground.GetComponent<CanvasGroup>();
+        float groupAlpha = 0.6f;
 
         // Handle extra weapon
-        if (type == "EXTRA" && extraWeapon.weaponName.Equals(weaponName))
-            color.a = 1f;
+        if (type == "HAND" && extraWeapon.weaponName.Equals(weaponName))
+            groupAlpha = 1f;
         else
-            color.a = 0.7f;
-        extraWeapon.weaponBackground.color = color;
-        extraWeapon.weaponIcon.color = color;
+            groupAlpha = 0.6f;
+        extraCanvasGroup.alpha = groupAlpha;
 
         // Handle main weapons
         int index = 0;
         foreach (Weapon weapon in weapons)
         {
+            CanvasGroup weaponCanvasGroup = weapon.weaponBackground.GetComponent<CanvasGroup>();
             if (weapon.weaponName.Equals(weaponName))
             {
-                color.a = 1f;
+                groupAlpha = 1f;
                 currentWeaponIndex = index;
             }
             else
-            {
-                color.a = 0.7f;
-            }
-            weapon.weaponBackground.color = color;
-            weapon.weaponIcon.color = color;
+                groupAlpha = 0.6f;
+            weaponCanvasGroup.alpha = groupAlpha;
             index++;
         }
     }

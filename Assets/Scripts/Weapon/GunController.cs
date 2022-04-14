@@ -211,6 +211,6 @@ public class GunController : MonoBehaviour
         currentGun = gun;
         currentGun.gameObject.SetActive(true);
         currentGun.animator.SetTrigger("Get");
-        MainUI.Instance.CurrentWeaponChanged("MAIN", currentGun.gunName);
+        MainUI.Instance.CurrentWeaponChanged(WeaponManager.isActivating, currentGun.gunName);
     }
 }

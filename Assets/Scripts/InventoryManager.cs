@@ -24,14 +24,9 @@ public class InventoryManager : MonoBehaviour
     void Awake()
     {
         if (Instance != null && Instance != this)
-        {
             Destroy(gameObject);
-        }
         else
-        {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
     }
 
     public InventoryItem GetItem(ItemSO item)

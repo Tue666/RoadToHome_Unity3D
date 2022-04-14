@@ -70,6 +70,6 @@ public class HandController : MonoBehaviour
         currentHand = hand;
         currentHand.gameObject.SetActive(true);
         currentHand.animator.SetTrigger("Get");
-        MainUI.Instance.CurrentWeaponChanged("EXTRA", currentHand.handName);
+        MainUI.Instance.CurrentWeaponChanged(WeaponManager.isActivating, currentHand.handName);
     }
 }

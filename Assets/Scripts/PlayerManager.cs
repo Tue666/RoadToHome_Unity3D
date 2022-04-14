@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
+
     public GameObject player = null;
     public Camera cameraLook = null;
     public Camera cameraRecoil = null;
@@ -24,7 +25,7 @@ public class PlayerManager : MonoBehaviour
 
     void InitializeIfNecessary()
     {
-        if (player == null) player = GameObject.FindWithTag("Player");
+        if (player == null) player = gameObject;
         if (cameraLook == null) cameraLook = GameObject.FindWithTag("Camera Look").GetComponent<Camera>();
         if (cameraRecoil == null) cameraRecoil = GameObject.FindWithTag("Camera Recoil").GetComponent<Camera>();
     }
@@ -32,14 +33,13 @@ public class PlayerManager : MonoBehaviour
     void Awake()
     {
         if (Instance != null && Instance != this)
-        {
             Destroy(gameObject);
-        }
         else
-        {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+    }
+
+    void Start()
+    {
         InitializeIfNecessary();
         MainUI.Instance.ExpChanged(currentExp, maxExp);
         MainUI.Instance.UpdateExpBar(currentExp / maxExp);

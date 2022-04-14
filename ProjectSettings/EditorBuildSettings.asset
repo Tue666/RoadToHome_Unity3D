@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Park Scene.unity
     guid: 6cf94dc570ada8c458c8d11762187812
+  - enabled: 1
+    path: Assets/Scenes/Warehouse Scene.unity
+    guid: 04ba57353b4f0284686265d3d150c23c
+  - enabled: 1
+    path: Assets/Scenes/Industrial Scene.unity
+    guid: 9f8b491741395a042bd8af1aa4e57163
   m_configObjects: {}

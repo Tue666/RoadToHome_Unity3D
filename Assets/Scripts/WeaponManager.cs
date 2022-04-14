@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
+    public static WeaponManager Instance { get; private set; }
+
     [SerializeField] private Hand[] hands;
     [SerializeField] private HandController handController;
     [SerializeField] private Gun[] guns;
@@ -16,9 +18,13 @@ public class WeaponManager : MonoBehaviour
     public static Animator currentAnimator;
     public static string isActivating = "HAND";
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        if (Instance != null && Instance != this)
+            Destroy(gameObject);
+        else
+            Instance = this;
+
         foreach (Hand hand in hands)
         {
             if (hand != null)
@@ -67,7 +73,6 @@ public class WeaponManager : MonoBehaviour
             return;
         }
         WeaponChange(type, name);
-        MainUI.Instance.SwitchCrosshair(isActivating);
     }
 
     void WeaponChange(string type, string name)
@@ -86,5 +91,6 @@ public class WeaponManager : MonoBehaviour
                 break;
         }
         previousWeaponName = name;
+        MainUI.Instance.SwitchCrosshair(isActivating);
     }
 }
