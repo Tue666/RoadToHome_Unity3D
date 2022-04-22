@@ -5,14 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - WeaponCamera
   - Spawn Area
   - Camera Look
   - Camera Recoil
-  - Crosshair
-  - Focused
   - Spawn Points
-  - Space Bag
+  - Boss
   layers:
   - Default
   - TransparentFX

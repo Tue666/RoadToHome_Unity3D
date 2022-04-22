@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     private bool isStopping = false;
     private float runningStaminaCost = 0.5f;
     private float walkingStaminaCost = 0.2f;
-    private float staminaRestore = 1f;
+    private float staminaRestore = 3f;
 
     private WaitForSeconds waitStaminaDrop = new WaitForSeconds(0.1f);
 
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
             if (!isRunning)
             {
                 isRunning = true;
-                PlayerManager.Instance.movementSpeed = 6f + PlayerManager.Instance.movementPlus;
+                PlayerManager.Instance.movementSpeed = 10f + PlayerManager.Instance.movementPlus;
                 PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost, waitStaminaDrop);
             }
             return;
@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour
             if (!isWalking)
             {
                 isWalking = true;
-                PlayerManager.Instance.movementSpeed = 2f + PlayerManager.Instance.movementPlus;
+                PlayerManager.Instance.movementSpeed = 5f + PlayerManager.Instance.movementPlus;
                 PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost, waitStaminaDrop);
             }
             return;

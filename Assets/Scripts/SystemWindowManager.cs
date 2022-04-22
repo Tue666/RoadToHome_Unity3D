@@ -19,7 +19,7 @@ public class SystemWindowManager : MonoBehaviour
         else
             Instance = this;
 
-        HandlePosition("TOP-RIGHT");
+        HandlePosition("TOP-RIGHT"); 
     }
 
     void HandleColor(string status)
@@ -31,49 +31,49 @@ public class SystemWindowManager : MonoBehaviour
         {
             case "B":
                 windowBackground.color = new Color(0.6f, 0.6f, 1f, 0.8f);
-                headerIcon.color = new Color(0.6f, 0.6f, 1f, 0.8f);
-                footerIcon.color = new Color(0.6f, 0.6f, 1f, 0.8f);
+                headerIcon.color = new Color(0.8f,0.8f, 1f, 1f);
+                footerIcon.color = new Color(0.8f, 0.8f, 1f, 1f);
                 break;
             case "A":
                 windowBackground.color = new Color(0.3f, 0.6f, 0.5f, 0.8f);
-                headerIcon.color = new Color(0.3f, 0.6f, 0.5f, 0.8f);
-                footerIcon.color = new Color(0.3f, 0.6f, 0.5f, 0.8f);
+                headerIcon.color = new Color(0.3f, 0.8f, 0.6f, 1f);
+                footerIcon.color = new Color(0.3f, 0.8f, 0.6f, 1f);
                 break;
             case "S":
                 windowBackground.color = new Color(0.7f, 0.3f, 0.2f, 0.8f);
-                headerIcon.color = new Color(0.7f, 0.3f, 0.2f, 0.8f);
-                footerIcon.color = new Color(0.7f, 0.3f, 0.2f, 0.8f);
+                headerIcon.color = new Color(1f, 0.5f, 0.4f, 1f);
+                footerIcon.color = new Color(1f, 0.5f, 0.4f, 1f);
                 break;
             case "SS":
                 windowBackground.color = new Color(0.8f, 0.5f, 0.2f, 0.8f);
-                headerIcon.color = new Color(0.8f, 0.5f, 0.2f, 0.8f);
-                footerIcon.color = new Color(0.8f, 0.5f, 0.2f, 0.8f);
+                headerIcon.color = new Color(0.9f, 0.7f, 0.4f, 1f);
+                footerIcon.color = new Color(0.9f, 0.7f, 0.4f, 1f);
                 break;
             case "SSS":
                 windowBackground.color = new Color(0.8f, 0.8f, 0.1f, 0.8f);
-                headerIcon.color = new Color(0.8f, 0.8f, 0.1f, 0.8f);
-                footerIcon.color = new Color(0.8f, 0.8f, 0.1f, 0.8f);
+                headerIcon.color = new Color(1f, 0.9f, 0.5f, 1f);
+                footerIcon.color = new Color(1f, 0.9f, 0.5f, 1f);
                 break;
             case "SUCCESS":
-                windowBackground.color = new Color(0f, 1f, 0.1f, 0.8f);
-                headerIcon.color = new Color(0f, 1f, 0.1f, 0.8f);
-                footerIcon.color = new Color(0f, 1f, 0.1f, 0.8f);
+                windowBackground.color = new Color(0.2f, 0.9f, 0.3f, 0.8f);
+                headerIcon.color = new Color(1f, 1f, 1f, 1f);
+                footerIcon.color = new Color(1f, 1f, 1f, 1f);
                 break;
             case "WARNING":
-                windowBackground.color = new Color(1f, 0.6f, 0f, 0.8f);
-                headerIcon.color = new Color(1f, 0.6f, 0f, 0.8f);
-                footerIcon.color = new Color(1f, 0.6f, 0f, 0.8f);
+                windowBackground.color = new Color(1f, 0.7f, 0.1f, 0.8f);
+                headerIcon.color = new Color(1f, 1f, 1f, 1f);
+                footerIcon.color = new Color(1f, 1f, 1f, 1f);
                 break;
             case "DANGER":
                 windowBackground.color = new Color(1f, 0f, 0f, 0.8f);
-                headerIcon.color = new Color(1f, 0f, 0f, 0.8f);
-                footerIcon.color = new Color(1f, 0f, 0f, 0.8f);
+                headerIcon.color = new Color(1f, 1f, 1f, 1f);
+                footerIcon.color = new Color(1f, 1f, 1f, 1f);
                 break;
             default:
                 // Default will blue
                 windowBackground.color = new Color(0f, 0.4f, 1f, 0.8f);
-                headerIcon.color = new Color(0f, 0.4f, 1f, 0.8f);
-                footerIcon.color = new Color(0f, 0.4f, 1f, 0.8f);
+                headerIcon.color = new Color(1f, 1f, 1f, 1f);
+                footerIcon.color = new Color(1f, 1f, 1f, 1f);
                 break;
         }
     }
@@ -112,6 +112,7 @@ public class SystemWindowManager : MonoBehaviour
         bool footerIcon = true
     )
     {
+        AudioManager.Instance.PlayEffect("PLAYER", "System Window Show");
         HandleColor(status);
 
         // Enable header & footer if needed or otherwise

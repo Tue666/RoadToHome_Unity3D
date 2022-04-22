@@ -5,8 +5,7 @@ public class Gun : MonoBehaviour
     public ItemSO ammo;
     public string gunName;
     public Sprite gunIcon;
-    public int damage = 20;
-    public int ammoType = 0;
+    public int damage = 35;
     public int currentAmmoCount = 0;
     public int maxAmmoCount = 40;
     public float range = 100;
@@ -26,4 +25,11 @@ public class Gun : MonoBehaviour
     public float recoilReturnSpeed;
 
     public Animator animator;
+
+    #region Events
+    public void PlayRunEffect()
+    {
+        AudioManager.Instance.PlayEffect("PLAYER", "Run");
+    }
+    #endregion
 }

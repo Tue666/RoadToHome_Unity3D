@@ -28,7 +28,7 @@ public class GenerateDropItems : MonoBehaviour
 
     void HandleTableOpen()
     {
-        float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
+        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.player.transform.position);
         if (distance <= 1 && !isOpening)
         {
             if (isInitialized)
@@ -41,6 +41,7 @@ public class GenerateDropItems : MonoBehaviour
         if (distance > 1 && isOpening)
         {
             isOpening = false;
+            DroppedItemsUI.Instance.ClearDropTable();
             UIManager.Instance.HideView("Dropped Items Table");
         }
     }

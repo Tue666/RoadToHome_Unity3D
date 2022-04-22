@@ -2026,7 +2026,7 @@ MonoBehaviour:
   enemy: {fileID: 11400000, guid: c2e25186fe4ff73408a2b18702f96e1d, type: 2}
   dropTable: {fileID: 11400000, guid: fd223183fe2a8944eb7ca64cbc03c0bf, type: 2}
   _damage: 20
-  health: 50
+  health: 100
   defense: 5
 --- !u!195 &-2441812089860447158
 NavMeshAgent:

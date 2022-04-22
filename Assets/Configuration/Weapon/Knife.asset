@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Knife
   m_EditorClassIdentifier: 
   handName: Knife
-  damage: 20
-  range: 100
+  damage: 10
+  range: 6
   attackRate: 1
   attackClipName: Knife Attack
   animator: {fileID: 4390244192395287435, guid: e25dfcea4e0279c4eb943f40eec21665, type: 3}

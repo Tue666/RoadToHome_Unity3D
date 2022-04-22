@@ -4,11 +4,12 @@ using UnityEngine;
 public class HandController : MonoBehaviour
 {
     [SerializeField] private Hand currentHand;
-    [SerializeField] private Hand handEquipped;
 
     private Camera cameraFOV = null;
     private float nextAttackTime;
     private RaycastHit hit;
+    private GameObject previousObject = null;
+    private object hitObject = null;
 
     private WaitForSeconds waitAttackTakeEffect = new WaitForSeconds(0.4f);
 
@@ -19,7 +20,6 @@ public class HandController : MonoBehaviour
         if (!currentHand.gameObject.activeSelf) currentHand.gameObject.SetActive(true);
         WeaponManager.currentWeapon = currentHand.gameObject.transform;
         WeaponManager.currentAnimator = currentHand.animator;
-        MainUI.Instance.InitExtraWeaponBar(handEquipped);
     }
 
     // Update is called once per frame
@@ -51,10 +51,25 @@ public class HandController : MonoBehaviour
         yield return waitAttackTakeEffect;
         if (Physics.Raycast(cameraFOV.transform.position, cameraFOV.transform.forward, out hit, currentHand.range))
         {
-            Target target = hit.transform.GetComponent<Target>();
-            if (target != null)
+            if (hitObject == null || hit.transform.gameObject != previousObject)
             {
-                target.TakeDamage(currentHand.damage, hit.point);
+                if (hit.transform.tag == "Enemy")
+                    hitObject = hit.transform.GetComponent<Target>();
+                else if (hit.transform.tag == "Boss")
+                    hitObject = hit.transform.GetComponent<Boss>();
+                else
+                {
+                    hitObject = null;
+                    yield break;
+                }
+                previousObject = hit.transform.gameObject;
+            }
+            if (hitObject != null)
+            {
+                if (hitObject is Target)
+                    ((Target)hitObject).TakeDamage(currentHand.damage + PlayerManager.Instance.strength, hit.point);
+                if (hitObject is Boss)
+                    ((Boss)hitObject).TakeDamage(currentHand.damage + PlayerManager.Instance.strength, hit.point);
             }
         }
     }
@@ -63,7 +78,7 @@ public class HandController : MonoBehaviour
     {
         if (WeaponManager.currentWeapon != null)
             WeaponManager.currentWeapon.gameObject.SetActive(false);
-        AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change", true);
+        AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change");
         WeaponManager.currentWeapon = hand.gameObject.transform;
         WeaponManager.currentAnimator = hand.animator;
         WeaponManager.isActivating = "HAND";

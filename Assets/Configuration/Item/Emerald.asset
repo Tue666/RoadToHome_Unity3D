@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
+  m_Name: Emerald
+  m_EditorClassIdentifier: 
+  itemName: Emerald
+  rank: 1
+  type: 2
+  icon: {fileID: 21300000, guid: 5a406b2b036474f3ba1c04a948c6d544, type: 3}
+  function: 0
+  description: "Emerald is a gemstone and colored green by trace amounts of chromium
+    or sometimes vanadium. Beryl has a hardness of 7.5\u20138 on the Mohs scale.
+    Most emeralds are highly included, so their toughness (resistance to breakage)
+    is classified as generally poor. Emerald is a cyclosilicate.\r\nEmerald is regarded
+    as the traditional birthstone for May as well as the traditional gemstone for
+    the astrological sign of Cancer.\r\nThe emerald stone have a high price so you
+    need sell it for the shop, so you can buy something you want.\r\n\r\nObtained
+    from defeating zombies in the warehouse. "
+  maximum: 999
+  weight: 0
+  sellPrice: 2000
+  isUnique: 0

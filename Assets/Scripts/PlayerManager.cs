@@ -9,12 +9,13 @@ public class PlayerManager : MonoBehaviour
     public Camera cameraLook = null;
     public Camera cameraRecoil = null;
 
+    [HideInInspector] public float strength = 10f;
     private int maxLevel = 30;
-    private int currentLevel = 1;
-    private float maxHealth = 200f;
-    private float health = 200f;
-    private float maxStamina = 100f;
-    [HideInInspector] public float stamina = 100f;
+    [SerializeField] private int currentLevel = 1;
+    [HideInInspector] public float maxHealth = 200f;
+    [HideInInspector] public float health = 200f;
+    [HideInInspector] public float maxStamina = 200f;
+    [HideInInspector] public float stamina = 200f;
     private float defense = 6f;
     private float maxExp = 900f;
     private float currentExp = 0f;
@@ -22,6 +23,12 @@ public class PlayerManager : MonoBehaviour
     [HideInInspector] public float movementPlus = 0f;
 
     private IEnumerator staminaDropCoroutine;
+
+    #region Weapon Equipped
+    public Gun[] gunsEquiqqed;
+    public Hand handEquipped;
+    public ItemSO[] potionsEquipped;
+    #endregion
 
     void InitializeIfNecessary()
     {
@@ -41,9 +48,14 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         InitializeIfNecessary();
+        LevelUp();
         MainUI.Instance.ExpChanged(currentExp, maxExp);
         MainUI.Instance.UpdateExpBar(currentExp / maxExp);
         MainUI.Instance.LevelChanged(currentLevel);
+
+        MainUI.Instance.InitMainWeaponBar(gunsEquiqqed);
+        MainUI.Instance.InitExtraWeaponBar(handEquipped);
+        MainUI.Instance.InitPotions(potionsEquipped);
     }
 
     public void StartStaminaDrop(float amount, WaitForSeconds waitStaminaDrop)
@@ -58,9 +70,9 @@ public class PlayerManager : MonoBehaviour
     {
         while (true)
         {
-            if (stamina + amount > 100f)
+            if (stamina + amount > maxStamina)
             {
-                stamina = 100f;
+                stamina = maxStamina;
                 yield break;
             }
             if (stamina + amount < 0f)
@@ -76,10 +88,16 @@ public class PlayerManager : MonoBehaviour
 
     public void LevelUp()
     {
-        maxHealth = 200f * currentLevel; // 200 is health property
+        if (currentLevel == 1) return;
+
+        SystemWindowManager.Instance.ShowWindowSystem("DEFAULT", "Level Up\nCongratulations!");
+        strength *= currentLevel;
+        maxHealth *= currentLevel;
+        defense *= currentLevel;
         maxExp = (currentLevel + 2) * 300;
         health = maxHealth; // Full of blood whenver level up
-        defense = currentLevel * 6;
+        MainUI.Instance.UpdateHealthBar(health / maxHealth);
+        
         switch (currentLevel)
         {
             case 5:
@@ -96,10 +114,10 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    public void IncreaseExp(int enemyLevel)
+    public void IncreaseExp(int difficult)
     {
         if (currentLevel >= maxLevel) return;
-        currentExp += (65 - (enemyLevel * 2));
+        currentExp += ((difficult * 100) - (currentLevel * 10));
         float diff = maxExp - currentExp;
         if (diff <= 0)
         {
@@ -125,7 +143,7 @@ public class PlayerManager : MonoBehaviour
         AudioManager.Instance.PlayEffect("PLAYER", "Player Take Damage");
         Transform cameraShake = cameraRecoil.transform;
         StartCoroutine(MainUI.Instance.ShowDirectionIndicator(attacker, cameraShake));
-        StartCoroutine(MainUI.Instance.ShakeScreen(1f, cameraShake));
+        StartCoroutine(MainUI.Instance.ShakeScreen(1f, 1f, cameraShake));
         StartCoroutine(MainUI.Instance.ShowBloodScreen());
         StartCoroutine(MainUI.Instance.UpdateHealthDrop());
         if (health <= 0)

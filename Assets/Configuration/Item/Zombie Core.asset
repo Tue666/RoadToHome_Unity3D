@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
+  m_Name: Zombie Core
+  m_EditorClassIdentifier: 
+  itemName: Zombie Core
+  rank: 2
+  type: 1
+  icon: {fileID: 21300000, guid: 3d25e3540ef2540b781c8cd914a95397, type: 3}
+  function: 0
+  description: 'After the monster died it seemed that all the power was transferred
+    into this crystal. Maybe this is the cause of the monsters appearing.
+
+    You
+    can sell it to a store or keep it as a souvenir or study. It all depends on you.
+
+    
+
+    Obtained
+    from defeating zombies in the park.'
+  maximum: 999
+  weight: 0
+  sellPrice: 4000
+  isUnique: 0

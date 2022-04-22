@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
+  m_Name: Shapphire
+  m_EditorClassIdentifier: 
+  itemName: Sapphire
+  rank: 2
+  type: 2
+  icon: {fileID: 21300000, guid: 4d9d8045f6fcd460983e75137730823d, type: 3}
+  function: 0
+  description: "Sapphire is a precious gemstone The name sapphire is derived from
+    the Latin \"saphirus\" and the Greek \"sapheiros\", both of which mean blue.
+    Commonly, natural sapphires are cut and polished into gemstones and worn in jewelry.
+    They also may be created synthetically in laboratories for industrial or decorative
+    purposes in large crystal boules. Because of the remarkable hardness of sapphires
+    \u2013 9 on the Mohs scale (the third hardest mineral, after diamond at 10 and
+    moissanite at 9.5) \u2013 sapphires are also used in some non-ornamental applications,
+    such as infrared optical components, high-durability windows, wristwatch crystals
+    and movement bearings, and very thin electronic wafers, which are used as the
+    insulating substrates of special-purpose solid-state electronics such as integrated
+    circuits and GaN-based blue LEDs. Sapphire is the birthstone for September and
+    the gem of the 45th anniversary. A sapphire jubilee occurs after 65 years.\r\nThe
+    Sapphire stone have a high price so you need sell it for the shop, so you can
+    buy something you want.\r\n\r\nObtained from defeating zombies in the industrial."
+  maximum: 999
+  weight: 0
+  sellPrice: 3000
+  isUnique: 0

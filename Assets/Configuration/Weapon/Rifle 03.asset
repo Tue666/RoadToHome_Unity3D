@@ -15,7 +15,7 @@ MonoBehaviour:
   ammo: {fileID: 11400000, guid: e3e6207cce743974eaa16ec219c424d4, type: 2}
   gunName: Rifle 03
   gunIcon: {fileID: 21300000, guid: 5cce39cf79daa74479a8a5fc5bea4ff4, type: 3}
-  damage: 20
+  damage: 30
   ammoType: 0
   currentAmmoCount: 0
   maxAmmoCount: 40

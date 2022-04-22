@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Overide_DragonTheNightmare
+  m_Controller: {fileID: 9100000, guid: e399027f1ff2ddc40a4fb10fbb8d8707, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: c2fb9ad38a9c8cc4a8dc4f00a544ec5d, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 616ef59a5543c994ea0cc5e23a735426, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: bb160569f3ffd7c4791a3fc554d81670, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4be127c8c484392489acf13d8eb4145e, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 6f83b9d81f8c7854baeca6ff691bb0c1, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 4b1dcfc331de54549a94b650385f751e, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 34cbf41484d0da24e9a24545c9d5a332, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: a640f611148020047b485abcfdbb49cf, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 8b0b248c4105fd841aad612f61769ae9, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 111c5f2baba40874c84636fdf0cf746e, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 0b0985d8d75993d4ba1c094379da358c, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 5cfe5b96be26d60478f7a5749d947a62, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 555c2f8b240202a4c8f3c3f412587e5a, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 57b96fcfb13429847939b2e633026c89, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 1e32448c0eb5bdb45b3a576fb8011df0, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: a8d68f882ac2f2f48982204cc9c22f27, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: b2c69e83cd3a60045b2d7dba75f94d38, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e150af9ae9ca5f941bc5c2f0ce427476, type: 2}

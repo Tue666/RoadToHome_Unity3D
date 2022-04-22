@@ -14,9 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: The Soul Of The Devil
   rank: 1
+  type: 1
   icon: {fileID: 21300000, guid: 2303b1388cfb4441cbf96a91b1948ba6, type: 3}
-  description: Only powerful demons that are almost evolved will appear this soul
+  function: 0
+  description: 'Only demons that carry the blood of strength can appear this soul.
+
+    These
+    demons, if not eradicated soon, will certainly be a great threat to humanity.
+
+    Kill
+    and get a lot to prove you are a hunter full of experience as well as outstanding
+    level.
+
+
+
+    Obtained from defeating zombies in the park.'
   maximum: 999
   weight: 0
-  sellPrice: 800
+  sellPrice: 2000
   isUnique: 0

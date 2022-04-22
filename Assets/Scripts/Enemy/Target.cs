@@ -7,9 +7,9 @@ public class Target : MonoBehaviour
     [SerializeField] private EnemySO enemy;
     [SerializeField] private DropTableSO dropTable;
 
-    [SerializeField] private float _damage;
-    [SerializeField] private float health = 50f;
-    [SerializeField] private float defense = 5f;
+    private float _damage = 20f;
+    private float health = 100f;
+    private float defense = 5f;
 
     private bool _isDie = false;
     private bool _isChasing = false;
@@ -54,6 +54,7 @@ public class Target : MonoBehaviour
         movement = GetComponent<Movement>();
         _animator = GetComponent<Animator>();
         nameBar = GetComponentInChildren<TMP_Text>();
+        currentLevel = enemy.difficult; // temp
         UpdateStats();
         StartCoroutine(Evolution(enemy.evolutionSpeed));
     }
@@ -70,13 +71,13 @@ public class Target : MonoBehaviour
 
     void UpdateStats()
     {
-        _damage += currentLevel * 5;
+        _damage *= currentLevel;
+        health *= currentLevel;
+        defense *= currentLevel;
         maxExp = (currentLevel + 2) * 300;
-        health += currentLevel * health;
-        defense += currentLevel * 5;
         movement.maxSpeed += (currentLevel - (currentLevel / 2f));
         movement.detectRange += currentLevel;
-        float scale = (currentLevel * 0.2f) - 0.2f;
+        float scale = (currentLevel * 0.1f) - 0.1f;
         transform.localScale = transform.localScale + new Vector3(scale, scale, scale);
         nameBar.text = Helpers.ReplaceInRegionOfSpecialCharacters(nameBar.text, '[', ']', "Lv." + currentLevel);
     }
@@ -114,7 +115,7 @@ public class Target : MonoBehaviour
         _isDie = true;
         _animator.SetTrigger("Death");
         AudioManager.Instance.PlayEffect("ENEMY", "Enemy Death");
-        PlayerManager.Instance.IncreaseExp(currentLevel);
+        PlayerManager.Instance.IncreaseExp(enemy.difficult);
         int currentIndex = autoSpawner.spawnIndex;
         autoSpawner.spawnIndex--;
         if (currentIndex == autoSpawner.spawnNumber) autoSpawner.ReSpawn();

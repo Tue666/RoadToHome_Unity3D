@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50c442cd1b867434487f986aabc28f2f, type: 3}
+  m_Name: Zombie Drop Map 2
+  m_EditorClassIdentifier: 
+  dropCount: 10
+  droppedItems:
+  - item: {fileID: 11400000, guid: 78283c9c38ef0a643b57ddb047e0730b, type: 2}
+    percent: 100
+  - item: {fileID: 11400000, guid: 8a437af6e23fe6a4c99dc16519661a7d, type: 2}
+    percent: 50
+  - item: {fileID: 11400000, guid: 1c4ead2ea6e99b84fb9c3efca1498939, type: 2}
+    percent: 20
+  - item: {fileID: 11400000, guid: a49b503918a9bc842a7cbec10d4ef312, type: 2}
+    percent: 5
+  - item: {fileID: 11400000, guid: cf172dd22c41cdc4ab4132226b8107cd, type: 2}
+    percent: 4

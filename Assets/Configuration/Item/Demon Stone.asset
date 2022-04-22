@@ -14,8 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Demon Stone
   rank: 0
-  icon: {fileID: 21300000, guid: 2ebc775d915e44252b7b10bb19bae197, type: 3}
-  description: Demon Stone Description
+  type: 2
+  icon: {fileID: 21300000, guid: af43187fe78bf4124b5b3d89ceae73e6, type: 3}
+  function: 0
+  description: 'A stone that stores the fury of monsters.
+
+    Make sure you have
+    a strong mind, or you will be controlled by it.
+
+    The shop really needs these
+    new precious stones to entrust to the research team, please sell it to the shop
+    to receive money and buy necessary things.
+
+
+    Obtained from defeating zombies
+    in the park.'
   maximum: 999
   weight: 0
   sellPrice: 1000

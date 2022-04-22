@@ -19,6 +19,11 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadMap(int sceneIndex)
     {
+        if (Boss.beingChallenged)
+        {
+            SystemWindowManager.Instance.ShowWindowSystem("DANGER", "Player is challenging the boss, can't change the level!");
+            return;
+        }
         StartCoroutine(LoadMapCoroutine(sceneIndex));
     }
 

@@ -3,6 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
+public class BackgroundSound
+{
+    public string name;
+    public AudioClip clip;
+    [Range(0, 256)]
+    public int priority = 128;
+    [Range(0f, 1f)]
+    public float volume = 1f;
+    [Range(-3f, 3f)]
+    public float pitch = 1f;
+    public bool loop = false;
+}
+
+[Serializable]
 public class MusicSound
 {
     public string name;
@@ -27,17 +41,19 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
+    public AudioSource backgroundSource;
+    public BackgroundSound[] backgroundSounds;
+
+    public AudioSource musicSource;
     public MusicSound[] musicSounds;
 
+    public AudioSource effectSource;
     public EffectSound[] weaponSounds;
     public EffectSound[] playerSounds;
     public EffectSound[] enemySounds;
     private Dictionary<string, AudioClip> weaponSoundsDictionary = new Dictionary<string, AudioClip>();
     private Dictionary<string, AudioClip> playerSoundsDictionary = new Dictionary<string, AudioClip>();
     private Dictionary<string, AudioClip> enemySoundsDictionary = new Dictionary<string, AudioClip>();
-
-    public AudioSource effectSource;
-    public AudioSource musicSource;
 
     void Awake()
     {
@@ -65,6 +81,24 @@ public class AudioManager : MonoBehaviour
             if (sound != null)
                 enemySoundsDictionary.Add(sound.name, sound.clip);
         }
+    }
+
+    public void PlayBackground(string soundName)
+    {
+        BackgroundSound sound = Array.Find(backgroundSounds, sound => sound.name == soundName);
+        if (sound == null) return;
+        backgroundSource.clip = sound.clip;
+        backgroundSource.priority = sound.priority;
+        backgroundSource.volume = sound.volume;
+        backgroundSource.pitch = sound.pitch;
+        backgroundSource.loop = sound.loop;
+        backgroundSource.Play();
+    }
+
+    public void StopBackground()
+    {
+        if (backgroundSource.isPlaying)
+            backgroundSource.Stop();
     }
 
     public void PlayMusic(string soundName)

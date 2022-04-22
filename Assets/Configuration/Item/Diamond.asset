@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
+  m_Name: Diamond
+  m_EditorClassIdentifier: 
+  itemName: Diamond
+  rank: 3
+  type: 2
+  icon: {fileID: 21300000, guid: 140b055f49860469181046ce27a0e8ea, type: 3}
+  function: 0
+  description: 'Diamond is a solid form of the element carbon with its atoms arranged
+    in a crystal structure called diamond cubic. At room temperature and pressure,
+    another solid form of carbon known as graphite is the chemically stable form
+    of carbon, but diamond converts to it extremely slowly. Diamond has the highest
+    hardness and thermal conductivity of any natural material, properties that are
+    used in major industrial applications such as cutting and polishing tools. They
+    are also the reason that diamond anvil cells can subject materials to pressures
+    found deep in the Earth.
+
+    The emerald stone have a highest price so you
+    need sell it for the shop, so you can buy something you want.
+
+    
+
+    Obtained
+    from defeating zombies in the park nightmare.'
+  maximum: 999
+  weight: 0
+  sellPrice: 4000
+  isUnique: 0

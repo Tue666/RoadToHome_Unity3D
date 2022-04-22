@@ -52,12 +52,15 @@ public class UIManager : MonoBehaviour
         return false;
     }
 
-    public void ShowView(string viewName)
+    public void ShowView(string viewName, bool toggle = false)
     {
         if (Helpers.ContainsKeyButValueNotNull(viewsDictionary, viewName))
         {
             GameObject view = viewsDictionary[viewName];
-            view.SetActive(!view.activeSelf);
+            if (toggle)
+                view.SetActive(!view.activeSelf);
+            else
+                view.SetActive(true);
         }
     }
 

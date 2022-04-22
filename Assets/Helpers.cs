@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class Helpers
 {
+    public static float vector2DDistance(Vector3 from, Vector3 to)
+    {
+        float xDiff = from.x - to.x;
+        float zDiff = from.z - to.z;
+        return Mathf.Sqrt((xDiff * xDiff) + (zDiff * zDiff));
+    }
+
     public static bool ContainsKeyButValueNotNull<X, Y>(Dictionary<X, Y> dictionary, X expectedKey)
     {
         Y actualValue;

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Hand
   m_EditorClassIdentifier: 
   handName: Hand
-  damage: 20
-  range: 100
+  damage: 5
+  range: 4
   attackRate: 1
   attackClipName: 
   animator: {fileID: 4249334953182918786, guid: 4567476a288447c4f886cffcc01999da, type: 3}

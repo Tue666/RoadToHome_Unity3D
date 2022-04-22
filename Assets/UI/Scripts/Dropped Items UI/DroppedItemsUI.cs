@@ -10,6 +10,8 @@ public class DroppedItemsUI : MonoBehaviour
     public Transform dropTable;
     public GameObject itemTemplate;
 
+    private List<TableItem> refTableItems;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -18,7 +20,18 @@ public class DroppedItemsUI : MonoBehaviour
             Instance = this;
     }
 
-    void ClearDropTable()
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (dropTable.childCount != 0)
+            {
+                PickUp(refTableItems[0], dropTable.GetChild(0).gameObject);
+            }
+        }
+    }
+
+    public void ClearDropTable()
     {
         foreach (Transform droppedItem in dropTable)
         {
@@ -28,7 +41,7 @@ public class DroppedItemsUI : MonoBehaviour
 
     public void InitializeDropTable(ref List<TableItem> tableItems)
     {
-        List<TableItem> refTableItems = tableItems; // assign refTableItems to address of tableItems
+        refTableItems = tableItems; // assign refTableItems to address of tableItems
         ClearDropTable();
         foreach (TableItem tableItem in tableItems)
         {
@@ -44,11 +57,16 @@ public class DroppedItemsUI : MonoBehaviour
             Button itemObjButton = itemObject.GetComponent<Button>();
             itemObjButton.onClick.AddListener(() =>
             {
-                AudioManager.Instance.PlayEffect("PLAYER", "Collect Item");
-                InventoryManager.Instance.InsertItem(tableItem);
-                refTableItems.Remove(tableItem); // refTableItems will solved can't use ref in lambda expression issue
-                Destroy(itemObject);
+                PickUp(tableItem, itemObject);
             });
         }
+    }
+
+    void PickUp(TableItem tableItem, GameObject itemObject)
+    {
+        AudioManager.Instance.PlayEffect("PLAYER", "Collect Item");
+        InventoryManager.Instance.InsertItem(tableItem);
+        refTableItems.Remove(tableItem); // refTableItems will solved can't use ref in lambda expression issue
+        Destroy(itemObject);
     }
 }

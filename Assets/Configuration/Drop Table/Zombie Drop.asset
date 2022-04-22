@@ -17,8 +17,10 @@ MonoBehaviour:
   - item: {fileID: 11400000, guid: fb84432698b235049b0e8847ed21cbd2, type: 2}
     percent: 100
   - item: {fileID: 11400000, guid: 8a437af6e23fe6a4c99dc16519661a7d, type: 2}
-    percent: 100
+    percent: 50
   - item: {fileID: 11400000, guid: 1c4ead2ea6e99b84fb9c3efca1498939, type: 2}
-    percent: 100
-  - item: {fileID: 11400000, guid: b728c26ddf6c8d649a0f6ffc63c9d287, type: 2}
-    percent: 100
+    percent: 20
+  - item: {fileID: 11400000, guid: a49b503918a9bc842a7cbec10d4ef312, type: 2}
+    percent: 5
+  - item: {fileID: 11400000, guid: cf172dd22c41cdc4ab4132226b8107cd, type: 2}
+    percent: 4

@@ -45,8 +45,8 @@ public class CharacterUI : MonoBehaviour
             itemObjButton.onClick.AddListener(() =>
             {
                 ItemSO item = inventoryItem.item;
-                string content = string.Format("[{0}]\nRanking: [{1}]\n«««« ▼ »»»»\n\n{2}\n\nSell price: {3:#,##0} coin",
-                    item.itemName, item.rank, item.description, item.sellPrice);
+                string content = string.Format("[{0}]\nRanking: [{1}]\nType: [{2}]\n\n«««« ▼ »»»»\n\n{3}\n\nSell price: {4:#,##0} coin",
+                    item.itemName, item.rank, item.type, item.description, item.sellPrice);
                 SystemWindowManager.Instance.ShowWindowSystem(item.rank.ToString(), content, "MOUSE", false);
             });
         }

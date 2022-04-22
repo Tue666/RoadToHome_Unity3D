@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f696f81da2427247b1ed0a89501af52, type: 3}
+  m_Name: Zombie Map 2
+  m_EditorClassIdentifier: 
+  difficult: 7
+  maxLevel: 11
+  summonRatePercent: 100
+  evolutionSpeed: 10
+  attackRange: 3
+  attackRate: 3.5
+  dropItemsTime: 25
+  enemyPrefab: {fileID: 4493914613880827488, guid: 19eb8d31617fda847ac8c3caceb900d2, type: 3}
+  takeDamageEffect: {fileID: 1000013169864706, guid: e5a3d6da48298a0458c1990f58c27069, type: 3}
+  defenseEffect: {fileID: 100004, guid: 240a0017cdd7934499c19f014aabe974, type: 3}
+  evolutionEffect: {fileID: 1006615274023270, guid: 9092d3ff769a86f499938c5917007ce9, type: 3}
+  dropEffect: {fileID: 100004, guid: 6836f5eaa96f845c4ac0909f84272556, type: 3}
+  wanderRange: 500
+  escapeRange: 1
+  nearEnemiesChaseRange: 50

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f696f81da2427247b1ed0a89501af52, type: 3}
   m_Name: Zombie
   m_EditorClassIdentifier: 
+  difficult: 1
   maxLevel: 5
-  summonRatePercent: 90
-  evolutionSpeed: 15
+  summonRatePercent: 100
+  evolutionSpeed: 10
   attackRange: 3
   attackRate: 3.5
   dropItemsTime: 25

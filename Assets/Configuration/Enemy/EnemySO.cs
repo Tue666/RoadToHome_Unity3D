@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemySO : ScriptableObject
 {
     // Enemy
+    public int difficult;
     public int maxLevel;
     public float summonRatePercent;
     public float evolutionSpeed;

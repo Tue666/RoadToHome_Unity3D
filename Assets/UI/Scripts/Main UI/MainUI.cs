@@ -21,6 +21,15 @@ public class ExtraWeapon
     public Image weaponIcon;
 }
 
+[System.Serializable]
+public class Potion
+{
+    public string potionName;
+    public Image potionIcon;
+    public TMP_Text potionCount;
+    public Image potionCountdown;
+}
+
 public class MainUI : MonoBehaviour
 {
     public static MainUI Instance { get; private set; }
@@ -58,8 +67,7 @@ public class MainUI : MonoBehaviour
     private WaitForSeconds waitShowDirection = new WaitForSeconds(1f);
     //------------------------------------------------------------
     // Potions
-    public Image potionCountdownIconOne;
-    public Image potionCountdownIconTwo;
+    public Potion[] potionsUI;
 
     private int potionCountdownTimeOne = 10;
     private int potionCountdownTimeTwo = 10;
@@ -195,6 +203,23 @@ public class MainUI : MonoBehaviour
     #endregion
 
     #region Status
+    public void InitPotions(ItemSO[] potions)
+    {
+        int index = 0;
+        foreach (ItemSO item in potions)
+        {
+            potionsUI[index].potionName = item.itemName;
+            potionsUI[index].potionIcon.sprite = item.icon;
+            potionsUI[index].potionCount.text = InventoryManager.Instance.GetItem(item).quantity.ToString();
+            index++;
+        }
+    }
+
+    public void PotionCountChanged(int index, int newValue)
+    {
+        potionsUI[index].potionCount.text = newValue.ToString();
+    }
+
     public void UpdateExpBar(float fillAmount)
     {
         expBar.fillAmount = fillAmount;
@@ -240,13 +265,13 @@ public class MainUI : MonoBehaviour
         {
             case 1:
                 {
-                    potionCDIcon = potionCountdownIconOne;
+                    potionCDIcon = potionsUI[0].potionCountdown;
                     CDTime = potionCountdownTimeOne;
                 }
                 break;
             case 2:
                 {
-                    potionCDIcon = potionCountdownIconTwo;
+                    potionCDIcon = potionsUI[1].potionCountdown;
                     CDTime = potionCountdownTimeTwo;
                 }
                 break;
@@ -277,16 +302,27 @@ public class MainUI : MonoBehaviour
         directionIndicator.SetActive(false);
     }
 
-    public IEnumerator ShakeScreen(float duration, Transform cameraShake)
+    public IEnumerator ShakeScreen(float intensity, float duration, Transform cameraShake)
     {
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
-            cameraShake.localPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+            cameraShake.localPosition = new Vector3(Random.Range(-intensity, intensity), Random.Range(-intensity, intensity), 0);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         cameraShake.localPosition = Vector3.zero;
+    }
+
+    public IEnumerator FlyAway(float intensity, float duration, Vector3 direction, Transform player)
+    {
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            player.localPosition = Vector3.Lerp(player.localPosition + new Vector3(0f, 0.1f, 0f), player.localPosition + (direction * intensity), 0.1f);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
     }
 
     public IEnumerator ShowBloodScreen()

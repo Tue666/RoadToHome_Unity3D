@@ -4,13 +4,14 @@ using UnityEngine;
 public class GunController : MonoBehaviour
 {
     [SerializeField] private Gun currentGun;
-    [SerializeField] private Gun[] gunsEquiqqed;
 
     private Camera cameraFOV = null;
     private bool isReloading;
     private bool isFocusing;
     private float nextShootingTime;
     private RaycastHit hit;
+    private GameObject previousObject = null;
+    private object hitObject = null;
 
     // Scope
     private int[] scopedFOV = { 10, 0, 0, 0, 0, 0, 0, 0, 20 }; // FOV from no scope to scope x8
@@ -29,7 +30,6 @@ public class GunController : MonoBehaviour
     {
         cameraFOV = PlayerManager.Instance.cameraRecoil;
         normalFOV = cameraFOV.fieldOfView;
-        MainUI.Instance.InitMainWeaponBar(gunsEquiqqed);
     }
 
     // Update is called once per frame
@@ -95,7 +95,7 @@ public class GunController : MonoBehaviour
         if (isScoped) StartCoroutine(OnUnScoped());
 
         isReloading = true;
-        AudioManager.Instance.PlayEffect("WEAPON", currentGun.reloadClipName, true);
+        AudioManager.Instance.PlayMusic(currentGun.reloadClipName);
         currentGun.animator.SetBool("Reloading", true);
         yield return new WaitForSeconds(currentGun.reloadTime);
         currentGun.animator.SetBool("Reloading", false);
@@ -139,10 +139,25 @@ public class GunController : MonoBehaviour
         bullet.AddPosition(currentGun.barrel.position);
         if (Physics.Raycast(cameraFOV.transform.position, cameraFOV.transform.forward, out hit, currentGun.range))
         {
-            Target target = hit.transform.GetComponent<Target>();
-            if (target != null)
+            if (hitObject == null || hit.transform.gameObject != previousObject)
             {
-                target.TakeDamage(currentGun.damage, hit.point);
+                if (hit.transform.tag == "Enemy")
+                    hitObject = hit.transform.GetComponent<Target>();
+                else if (hit.transform.tag == "Boss")
+                    hitObject = hit.transform.GetComponent<Boss>();
+                else
+                {
+                    hitObject = null;
+                    return;
+                }
+                previousObject = hit.transform.gameObject;
+            }
+            if (hitObject != null)
+            {
+                if (hitObject is Target)
+                    ((Target)hitObject).TakeDamage(currentGun.damage + PlayerManager.Instance.strength, hit.point);
+                if (hitObject is Boss)
+                    ((Boss)hitObject).TakeDamage(currentGun.damage + PlayerManager.Instance.strength, hit.point);
                 isFocusing = true;
             }
             SpawnTrail(bullet, hit.point);
@@ -204,7 +219,7 @@ public class GunController : MonoBehaviour
     {
         if (WeaponManager.currentWeapon != null)
             WeaponManager.currentWeapon.gameObject.SetActive(false);
-        AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change", true);
+        AudioManager.Instance.PlayEffect("WEAPON", "Weapon Change");
         WeaponManager.currentWeapon = gun.gameObject.transform;
         WeaponManager.currentAnimator = gun.animator;
         WeaponManager.isActivating = "GUN";
