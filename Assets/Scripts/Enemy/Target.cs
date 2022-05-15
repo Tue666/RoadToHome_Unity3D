@@ -64,7 +64,7 @@ public class Target : MonoBehaviour
     {
         if (_isChasing)
         {
-            float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
+            float distance = Vector3.Distance(transform.position, PlayerManager.Instance.playerObj.transform.position);
             movement.ChaseThePlayer(distance);
         }
     }

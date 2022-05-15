@@ -3,6 +3,18 @@ using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
+class InventoryItemData
+{
+    public string id;
+    public int quantity;
+
+    public InventoryItemData(InventoryItem inventoryItem)
+    {
+        this.id = inventoryItem.item.id;
+        this.quantity = inventoryItem.quantity;
+    }
+}
+
 public class InventoryItem
 {
     public ItemSO item;
@@ -29,6 +41,43 @@ public class InventoryManager : MonoBehaviour
             Instance = this;
     }
 
+    void Start()
+    {
+        if (PlayerPrefs.GetString("GAME_MODE") == "continue")
+        {
+            LoadInventory();
+        }
+        else
+        {
+            inventoryItems.Add(new InventoryItem(GameManager.Instance.FindItemById("W1"), 30));
+        }
+    }
+
+    public void SaveInventory()
+    {
+        List<InventoryItemData> inventoryData = new List<InventoryItemData>();
+        foreach (InventoryItem inventoryItem in inventoryItems)
+        {
+            inventoryData.Add(new InventoryItemData(inventoryItem));
+        }
+        SaveSystem.Save("inventory", inventoryData);
+    }
+
+    public void LoadInventory()
+    {
+        List<InventoryItemData> inventoryData = SaveSystem.Load("inventory") as List<InventoryItemData>;
+        foreach (InventoryItemData inventoryItemData in inventoryData)
+        {
+            inventoryItems.Add(new InventoryItem(GameManager.Instance.FindItemById(inventoryItemData.id), inventoryItemData.quantity));
+        }
+    }
+
+    public bool ItemExists(ItemSO _item)
+    {
+        InventoryItem item = inventoryItems.Where(inventoryItem => inventoryItem.item == _item).FirstOrDefault();
+        return item != null;
+    }
+
     public InventoryItem GetItem(ItemSO item)
     {
         return inventoryItems.Where(inventoryItem => inventoryItem.item == item).SingleOrDefault();
@@ -36,7 +85,7 @@ public class InventoryManager : MonoBehaviour
 
     public void InsertItem(TableItem tableItem)
     {
-        InventoryItem item = inventoryItems.Where(itemInventory => itemInventory.item == tableItem.item).FirstOrDefault();
+        InventoryItem item = inventoryItems.Where(inventoryItem => inventoryItem.item == tableItem.item).FirstOrDefault();
         if (item != null)
         {
             if (!item.item.isUnique)

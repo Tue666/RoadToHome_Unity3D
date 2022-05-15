@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum Rank
@@ -29,6 +30,7 @@ public enum Function
 [CreateAssetMenu(fileName = "ItemSO", menuName = "Configuration/Item")]
 public class ItemSO : ScriptableObject
 {
+    public string id;
     public string itemName;
     public Rank rank;
     public Type type;
@@ -43,7 +45,7 @@ public class ItemSO : ScriptableObject
 
     public void PlayFunction()
     {
-        if (InventoryManager.Instance.GetItem(this).quantity <= 0) return;
+        if (!InventoryManager.Instance.ItemExists(this) || InventoryManager.Instance.GetItem(this).quantity <= 0) return;
 
         switch (function)
         {
@@ -51,26 +53,26 @@ public class ItemSO : ScriptableObject
                 break;
             case Function.HEAL_HEALTH:
                 {
-                    float amount = PlayerManager.Instance.maxHealth * 0.2f;
-                    if (PlayerManager.Instance.health + amount > PlayerManager.Instance.maxHealth)
+                    float amount = PlayerManager.Instance.player.maxHealth * 0.2f;
+                    if (PlayerManager.Instance.player.health + amount > PlayerManager.Instance.player.maxHealth)
                     {
-                        PlayerManager.Instance.health = PlayerManager.Instance.maxHealth;
+                        PlayerManager.Instance.player.health = PlayerManager.Instance.player.maxHealth;
                     }
                     else
-                        PlayerManager.Instance.health += amount;
-                    MainUI.Instance.UpdateHealthBar(PlayerManager.Instance.health / PlayerManager.Instance.maxHealth);
+                        PlayerManager.Instance.player.health += amount;
+                    MainUI.Instance.UpdateHealthBar(PlayerManager.Instance.player.health / PlayerManager.Instance.player.maxHealth);
                 }
                 break;
             case Function.HEAL_STAMINA:
                 {
-                    float amount = PlayerManager.Instance.maxStamina * 0.15f;
-                    if (PlayerManager.Instance.stamina + amount > PlayerManager.Instance.maxStamina)
+                    float amount = PlayerManager.Instance.player.maxStamina * 0.15f;
+                    if (PlayerManager.Instance.player.stamina + amount > PlayerManager.Instance.player.maxStamina)
                     {
-                        PlayerManager.Instance.stamina = PlayerManager.Instance.maxStamina;
+                        PlayerManager.Instance.player.stamina = PlayerManager.Instance.player.maxStamina;
                     }
                     else
-                        PlayerManager.Instance.stamina += amount;
-                    MainUI.Instance.UpdateStaminaBar(PlayerManager.Instance.stamina / PlayerManager.Instance.maxStamina);
+                        PlayerManager.Instance.player.stamina += amount;
+                    MainUI.Instance.UpdateStaminaBar(PlayerManager.Instance.player.stamina / PlayerManager.Instance.player.maxStamina);
                 }
                 break;
             default:

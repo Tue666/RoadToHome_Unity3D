@@ -5,22 +5,10 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
 
-    public GameObject player = null;
+    public PlayerSO player;
+    public GameObject playerObj = null;
     public Camera cameraLook = null;
     public Camera cameraRecoil = null;
-
-    [HideInInspector] public float strength = 10f;
-    private int maxLevel = 30;
-    [SerializeField] private int currentLevel = 1;
-    [HideInInspector] public float maxHealth = 200f;
-    [HideInInspector] public float health = 200f;
-    [HideInInspector] public float maxStamina = 200f;
-    [HideInInspector] public float stamina = 200f;
-    private float defense = 6f;
-    private float maxExp = 900f;
-    private float currentExp = 0f;
-    [HideInInspector] public float movementSpeed = 1f;
-    [HideInInspector] public float movementPlus = 0f;
 
     private IEnumerator staminaDropCoroutine;
 
@@ -32,7 +20,7 @@ public class PlayerManager : MonoBehaviour
 
     void InitializeIfNecessary()
     {
-        if (player == null) player = gameObject;
+        if (playerObj == null) playerObj = gameObject;
         if (cameraLook == null) cameraLook = GameObject.FindWithTag("Camera Look").GetComponent<Camera>();
         if (cameraRecoil == null) cameraRecoil = GameObject.FindWithTag("Camera Recoil").GetComponent<Camera>();
     }
@@ -47,11 +35,12 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
+        player.LoadPlayer();
+
         InitializeIfNecessary();
-        LevelUp();
-        MainUI.Instance.ExpChanged(currentExp, maxExp);
-        MainUI.Instance.UpdateExpBar(currentExp / maxExp);
-        MainUI.Instance.LevelChanged(currentLevel);
+        MainUI.Instance.ExpChanged(player.currentExp, player.maxExp);
+        MainUI.Instance.UpdateExpBar(player.currentExp / player.maxExp);
+        MainUI.Instance.LevelChanged(player.currentLevel);
 
         MainUI.Instance.InitMainWeaponBar(gunsEquiqqed);
         MainUI.Instance.InitExtraWeaponBar(handEquipped);
@@ -70,44 +59,42 @@ public class PlayerManager : MonoBehaviour
     {
         while (true)
         {
-            if (stamina + amount > maxStamina)
+            if (player.stamina + amount > player.maxStamina)
             {
-                stamina = maxStamina;
+                player.stamina = player.maxStamina;
                 yield break;
             }
-            if (stamina + amount < 0f)
+            if (player.stamina + amount < 0f)
             {
-                stamina = 0f;
+                player.stamina = 0f;
                 yield break;
             }
-            stamina += amount;
-            MainUI.Instance.UpdateStaminaBar(stamina / maxStamina);
+            player.stamina += amount;
+            MainUI.Instance.UpdateStaminaBar(player.stamina / player.maxStamina);
             yield return waitStaminaDrop;
         }
     }
 
     public void LevelUp()
     {
-        if (currentLevel == 1) return;
-
         SystemWindowManager.Instance.ShowWindowSystem("DEFAULT", "Level Up\nCongratulations!");
-        strength *= currentLevel;
-        maxHealth *= currentLevel;
-        defense *= currentLevel;
-        maxExp = (currentLevel + 2) * 300;
-        health = maxHealth; // Full of blood whenver level up
-        MainUI.Instance.UpdateHealthBar(health / maxHealth);
+        player.strength *= player.currentLevel;
+        player.maxHealth *= player.currentLevel;
+        player.defense *= player.currentLevel;
+        player.maxExp = (player.currentLevel + 2) * 300;
+        player.health = player.maxHealth; // Full of blood whenver level up
+        MainUI.Instance.UpdateHealthBar(player.health / player.maxHealth);
         
-        switch (currentLevel)
+        switch (player.currentLevel)
         {
             case 5:
-                movementPlus = 1f;
+                player.movementPlus = 1f;
                 break;
             case 15:
-                movementPlus = 1.5f;
+                player.movementPlus = 1.5f;
                 break;
             case 30:
-                movementPlus = 3f;
+                player.movementPlus = 3f;
                 break;
             default:
                 break;
@@ -116,39 +103,62 @@ public class PlayerManager : MonoBehaviour
 
     public void IncreaseExp(int difficult)
     {
-        if (currentLevel >= maxLevel) return;
-        currentExp += ((difficult * 100) - (currentLevel * 10));
-        float diff = maxExp - currentExp;
+        if (player.currentLevel >= player.maxLevel) return;
+        player.currentExp += ((difficult * 100) - (player.currentLevel * 10));
+        float diff = player.maxExp - player.currentExp;
         if (diff <= 0)
         {
-            currentLevel++;
-            currentExp = Mathf.Abs(diff);
+            player.currentLevel++;
+            player.currentExp = Mathf.Abs(diff);
             LevelUp();
-            MainUI.Instance.LevelChanged(currentLevel);
+            MainUI.Instance.LevelChanged(player.currentLevel);
         }
-        MainUI.Instance.ExpChanged(currentExp, maxExp);
-        MainUI.Instance.UpdateExpBar(currentExp / maxExp);
+        MainUI.Instance.ExpChanged(player.currentExp, player.maxExp);
+        MainUI.Instance.UpdateExpBar(player.currentExp / player.maxExp);
     }
 
-    public void TakeDamage(float amount, GameObject attacker)
+    public void TakeDamage(float amount, GameObject attacker, string effect = "")
     {
-        float dameTaken = amount - defense;
+        if (player.health <= 0) return;
+
+        float dameTaken = amount - player.defense;
         if (dameTaken <= 0)
         {
             // Do something like create a shield here
             return;
         }
-        health -= (amount - defense);
-        MainUI.Instance.UpdateHealthBar(health / maxHealth);
+        player.health -= (amount - player.defense);
+        MainUI.Instance.UpdateHealthBar(player.health / player.maxHealth);
         AudioManager.Instance.PlayEffect("PLAYER", "Player Take Damage");
         Transform cameraShake = cameraRecoil.transform;
         StartCoroutine(MainUI.Instance.ShowDirectionIndicator(attacker, cameraShake));
         StartCoroutine(MainUI.Instance.ShakeScreen(1f, 1f, cameraShake));
         StartCoroutine(MainUI.Instance.ShowBloodScreen());
         StartCoroutine(MainUI.Instance.UpdateHealthDrop());
-        if (health <= 0)
+        HandleEffect(effect, attacker.transform.forward);
+        if (player.health <= 0)
         {
-            Debug.Log("Dead!");
+            if (Boss.beingChallenged)
+            {
+                Boss.beingChallenged = false;
+            }
+            UIManager.Instance.ShowView("GameOver Menu");
+        }
+    }
+
+    public void HandleEffect(string effect, Vector3 direction = new Vector3())
+    {
+        switch (effect)
+        {
+            case "Shake":
+                StartCoroutine(MainUI.Instance.ShakeScreen(0.3f, 0.2f, PlayerManager.Instance.cameraRecoil.transform));
+                break;
+            case "Fly Away":
+                StartCoroutine(MainUI.Instance.ShakeScreen(0.3f, 0.2f, PlayerManager.Instance.cameraRecoil.transform));
+                StartCoroutine(MainUI.Instance.FlyAway(5f, 0.4f, direction, PlayerManager.Instance.playerObj.transform));
+                break;
+            default:
+                break;
         }
     }
 }

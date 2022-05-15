@@ -28,7 +28,7 @@ public class GenerateDropItems : MonoBehaviour
 
     void HandleTableOpen()
     {
-        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.player.transform.position);
+        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.playerObj.transform.position);
         if (distance <= 1 && !isOpening)
         {
             if (isInitialized)

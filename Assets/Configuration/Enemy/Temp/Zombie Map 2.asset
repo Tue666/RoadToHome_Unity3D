@@ -15,7 +15,7 @@ MonoBehaviour:
   difficult: 7
   maxLevel: 11
   summonRatePercent: 100
-  evolutionSpeed: 10
+  evolutionSpeed: 5
   attackRange: 3
   attackRate: 3.5
   dropItemsTime: 25

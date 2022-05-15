@@ -6,6 +6,7 @@ public class Swipe : MonoBehaviour
 {
     public Transform content;
     public Scrollbar scrollbar;
+    public int skipIndex = 0;
 
     private int currentIndex = -1;
     private int mutableIndex = 0;
@@ -36,7 +37,7 @@ public class Swipe : MonoBehaviour
 
     void OnEnable()
     {
-        mutableIndex = SceneLoader.currentScene;
+        mutableIndex = SceneLoader.currentScene - skipIndex;
     }
 
     // Update is called once per frame
@@ -123,10 +124,10 @@ public class Swipe : MonoBehaviour
 
     public void Teleport()
     {
-        if (SceneLoader.currentScene == currentIndex) return;
+        if (SceneLoader.currentScene == (currentIndex + skipIndex)) return;
 
         AudioManager.Instance.PlayEffect("PLAYER", "Opening/Closing Inventory");
-        SceneLoader.Instance.LoadMap(currentIndex);
+        SceneLoader.Instance.LoadMap(currentIndex + skipIndex);
         UIManager.Instance.HideView("Select Map UI");
     }
 }

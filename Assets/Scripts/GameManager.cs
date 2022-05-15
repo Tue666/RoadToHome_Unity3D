@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum GameState
@@ -9,12 +11,26 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public ItemSO[] items;
+
     private bool isConfinedCursor = false;
     private bool isFreeCursor = false;
 
     private bool isPotionOneUsing = false;
     private bool isPotionTwoUsing = false;
 
+    private Dictionary<string, ItemSO> itemsDictionary = new Dictionary<string, ItemSO>();
+
+    IEnumerator pauseGameCoroutine;
+
+    void InitDictionary()
+    {
+        foreach (ItemSO item in items)
+        {
+            if (item != null)
+                itemsDictionary.Add(item.id, item);
+        }
+    }
     void ConfinedCursor()
     {
         if (!isConfinedCursor) LockCursorChanged(CursorLockMode.Confined);
@@ -27,6 +43,11 @@ public class GameManager : MonoBehaviour
         else LockCursorChanged(CursorLockMode.Locked);
         isFreeCursor = !isFreeCursor;
     }
+    public ItemSO FindItemById(string id)
+    {
+        if (!itemsDictionary.ContainsKey(id)) return null;
+        return itemsDictionary[id];
+    }
 
     void Awake()
     {
@@ -34,6 +55,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         else
             Instance = this;
+        InitDictionary();
         LockCursorChanged(CursorLockMode.Locked);
     }
 
@@ -58,9 +80,9 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
             HandleToggleShop();
         if (Input.GetKeyDown(KeyCode.Z) && !isPotionOneUsing)
-            HandleUsePotion(1);
+            HandleUsePotion(0);
         if (Input.GetKeyDown(KeyCode.X) && !isPotionTwoUsing)
-            HandleUsePotion(2);
+            HandleUsePotion(1);
     }
 
     // Update is called once per frame
@@ -84,16 +106,33 @@ public class GameManager : MonoBehaviour
         switch (newState)
         {
             case GameState.Pause:
-                HandlePausegame();
+                StartPauseGameCoroutine();
                 break;
             default:
                 break;
         }
     }
 
-    void HandlePausegame()
+    public void StartPauseGameCoroutine()
     {
-        //Time.timeScale = Time.timeScale == 1 ? 0 : 1;
+        if (pauseGameCoroutine != null)
+            StopCoroutine(pauseGameCoroutine);
+        pauseGameCoroutine = HandlePausegame();
+        StartCoroutine(pauseGameCoroutine);
+    }
+    IEnumerator HandlePausegame()
+    {
+        if (UIManager.Instance.isShowing("Pause Menu"))
+        {
+            Time.timeScale = 1;
+            UIManager.Instance.HideView("Pause Menu");
+        }
+        else
+        {
+            UIManager.Instance.ShowView("Pause Menu");
+            yield return new WaitForSeconds(1f);
+            Time.timeScale = 0;
+        }
     }
     #endregion
 
@@ -111,42 +150,28 @@ public class GameManager : MonoBehaviour
         SystemWindowManager.Instance.ShowWindowSystem("DEFAULT", "The shop is not open yet, come back later!");
     }
 
-    public void HandleUsePotion(int potionSlot)
+    public void HandleUsePotion(int potionUsing)
     {
-        int index = 0;
-        AudioManager.Instance.PlayEffect("PLAYER", "Use Potion");
-        ItemSO potion = null;
-        switch (potionSlot)
+        ItemSO potion = PlayerManager.Instance.potionsEquipped[potionUsing];
+        if (!InventoryManager.Instance.ItemExists(potion) || InventoryManager.Instance.GetItem(potion).quantity <= 0)
         {
-            case 1:
-                {
-                    index = 0;
-                    potion = PlayerManager.Instance.potionsEquipped[0];
-                    potion.PlayFunction();
-                    StartCoroutine(MainUI.Instance.UsePotion(reference => isPotionOneUsing = reference, potionSlot));
-                }
+            SystemWindowManager.Instance.ShowWindowSystem("DANGER", "Out of quantity, go and get more!");
+            return;
+        }
+        AudioManager.Instance.PlayEffect("PLAYER", "Use Potion");
+        potion.PlayFunction();
+        InventoryManager.Instance.EditItem(new InventoryItem(potion, InventoryManager.Instance.GetItem(potion).quantity - 1));
+        MainUI.Instance.PotionCountChanged(potionUsing, InventoryManager.Instance.GetItem(potion).quantity);
+        switch (potionUsing)
+        {
+            case 0:
+                StartCoroutine(MainUI.Instance.UsePotion(reference => isPotionOneUsing = reference, potionUsing));
                 break;
-            case 2:
-                {
-                    index = 1;
-                    potion = PlayerManager.Instance.potionsEquipped[1];
-                    
-                    potion.PlayFunction();
-                    StartCoroutine(MainUI.Instance.UsePotion(reference => isPotionTwoUsing = reference, potionSlot));
-                }
+            case 1:
+                StartCoroutine(MainUI.Instance.UsePotion(reference => isPotionTwoUsing = reference, potionUsing));
                 break;
             default:
                 break;
-        }
-        if (potion != null)
-        {
-            if (InventoryManager.Instance.GetItem(potion).quantity <= 0)
-            {
-                SystemWindowManager.Instance.ShowWindowSystem("DANGER", "Item out of stock, please get more before using!");
-                return;
-            }
-            InventoryManager.Instance.EditItem(new InventoryItem(potion, InventoryManager.Instance.GetItem(potion).quantity - 1));
-            MainUI.Instance.PotionCountChanged(index, InventoryManager.Instance.GetItem(potion).quantity);
         }
     }
     #endregion

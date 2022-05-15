@@ -27,9 +27,13 @@ public class Gun : MonoBehaviour
     public Animator animator;
 
     #region Events
+    public void PlayWalkEffect()
+    {
+        //AudioManager.Instance.PlayEffect("PLAYER", "Walk");
+    }
     public void PlayRunEffect()
     {
-        AudioManager.Instance.PlayEffect("PLAYER", "Run");
+        //AudioManager.Instance.PlayEffect("PLAYER", "Run");
     }
     #endregion
 }

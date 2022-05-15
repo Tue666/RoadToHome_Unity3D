@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class DontDestroyOnLoad : MonoBehaviour
+public class PersistManage : MonoBehaviour
 {
-    public static DontDestroyOnLoad Instance { get; private set; }
+    public static PersistManage Instance { get; private set; }
 
     void Awake()
     {

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c442cd1b867434487f986aabc28f2f, type: 3}
   m_Name: Usurper
   m_EditorClassIdentifier: 
-  dropCount: 50
+  dropCount: 100
   droppedItems:
   - item: {fileID: 11400000, guid: bd23823ada017114ea6bfd25b45926f7, type: 2}
     percent: 50

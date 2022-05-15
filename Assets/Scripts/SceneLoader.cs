@@ -33,6 +33,8 @@ public class SceneLoader : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
+        if (sceneIndex == 0) Destroy(PersistManage.Instance.gameObject);
+
         SceneManager.LoadScene(sceneIndex);
     }
 }

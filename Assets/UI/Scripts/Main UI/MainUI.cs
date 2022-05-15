@@ -144,7 +144,8 @@ public class MainUI : MonoBehaviour
             weapons[index].weaponName = gun.gunName;
             weapons[index].weaponIcon.sprite = gun.gunIcon;
             weapons[index].currentAmmo.text = gun.currentAmmoCount.ToString();
-            weapons[index].remainingAmmo.text = InventoryManager.Instance.GetItem(gun.ammo).quantity.ToString();
+            if (InventoryManager.Instance.ItemExists(gun.ammo))
+                weapons[index].remainingAmmo.text = InventoryManager.Instance.GetItem(gun.ammo).quantity.ToString();
             HandleNoAmmoColor(index);
             index++;
         }
@@ -210,7 +211,8 @@ public class MainUI : MonoBehaviour
         {
             potionsUI[index].potionName = item.itemName;
             potionsUI[index].potionIcon.sprite = item.icon;
-            potionsUI[index].potionCount.text = InventoryManager.Instance.GetItem(item).quantity.ToString();
+            if (InventoryManager.Instance.ItemExists(item))
+                potionsUI[index].potionCount.text = InventoryManager.Instance.GetItem(item).quantity.ToString();
             index++;
         }
     }

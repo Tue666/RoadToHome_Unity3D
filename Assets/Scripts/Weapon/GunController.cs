@@ -42,7 +42,7 @@ public class GunController : MonoBehaviour
             if (currentGun.currentAmmoCount <= 0 || (Input.GetKeyDown(KeyCode.R) && currentGun.currentAmmoCount < currentGun.maxAmmoCount))
             {
                 // Must have ammo for reload
-                if (InventoryManager.Instance.GetItem(currentGun.ammo).quantity > 0)
+                if (InventoryManager.Instance.ItemExists(currentGun.ammo) && InventoryManager.Instance.GetItem(currentGun.ammo).quantity > 0)
                 {
                     reloadCoroutine = Reload();
                     StartCoroutine(reloadCoroutine);
@@ -155,9 +155,9 @@ public class GunController : MonoBehaviour
             if (hitObject != null)
             {
                 if (hitObject is Target)
-                    ((Target)hitObject).TakeDamage(currentGun.damage + PlayerManager.Instance.strength, hit.point);
+                    ((Target)hitObject).TakeDamage(currentGun.damage + PlayerManager.Instance.player.strength, hit.point);
                 if (hitObject is Boss)
-                    ((Boss)hitObject).TakeDamage(currentGun.damage + PlayerManager.Instance.strength, hit.point);
+                    ((Boss)hitObject).TakeDamage(currentGun.damage + PlayerManager.Instance.player.strength, hit.point);
                 isFocusing = true;
             }
             SpawnTrail(bullet, hit.point);

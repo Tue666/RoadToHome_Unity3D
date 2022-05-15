@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c442cd1b867434487f986aabc28f2f, type: 3}
   m_Name: Golem
   m_EditorClassIdentifier: 
-  dropCount: 10
+  dropCount: 50
   droppedItems:
   - item: {fileID: 11400000, guid: fb84432698b235049b0e8847ed21cbd2, type: 2}
-    percent: 50
+    percent: 100
   - item: {fileID: 11400000, guid: 1c4ead2ea6e99b84fb9c3efca1498939, type: 2}
     percent: 25
   - item: {fileID: 11400000, guid: 915bad16d0cf56c47bbde718dd940b63, type: 2}

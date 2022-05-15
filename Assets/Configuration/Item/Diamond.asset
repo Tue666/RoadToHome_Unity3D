@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: Diamond
   m_EditorClassIdentifier: 
+  id: M4
   itemName: Diamond
   rank: 3
   type: 2
@@ -26,13 +27,13 @@ MonoBehaviour:
     are also the reason that diamond anvil cells can subject materials to pressures
     found deep in the Earth.
 
-    The emerald stone have a highest price so you
-    need sell it for the shop, so you can buy something you want.
+    The emerald stone have a highest price so you need
+    sell it for the shop, so you can buy something you want.
 
-    
 
-    Obtained
-    from defeating zombies in the park nightmare.'
+
+    Obtained from
+    defeating zombies in the park nightmare.'
   maximum: 999
   weight: 0
   sellPrice: 4000

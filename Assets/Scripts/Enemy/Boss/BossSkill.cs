@@ -25,7 +25,7 @@ public class BossSkill : MonoBehaviour
 
     void NormalAttack()
     {
-        if (Helpers.vector2DDistance(transform.position, PlayerManager.Instance.player.transform.position) <= bossCS.boss.normalAttackRange)
+        if (Helpers.vector2DDistance(transform.position, PlayerManager.Instance.playerObj.transform.position) <= bossCS.boss.normalAttackRange)
         {
             if (Time.time >= nextNormalAttackTime)
             {
@@ -39,20 +39,18 @@ public class BossSkill : MonoBehaviour
     #region Events
     public void DealDamage(string effect = "")
     {
-        if (Helpers.vector2DDistance(transform.position, PlayerManager.Instance.player.transform.position) <= 1)
+        if (Helpers.vector2DDistance(transform.position, PlayerManager.Instance.playerObj.transform.position) <= 1)
         {
             if (Time.time >= nextNormalAttackTime)
             {
                 dameDealt = bossCS.boss.normalDamage;
-                PlayerManager.Instance.TakeDamage(dameDealt, gameObject);
-                bossCS.HandleEffectTakeDamage(effect);
+                PlayerManager.Instance.TakeDamage(dameDealt, gameObject, effect);
             }
         }
     }
     public void PlayerTakeDamage(string effect = "")
     {
-        PlayerManager.Instance.TakeDamage(dameDealt, gameObject);
-        bossCS.HandleEffectTakeDamage(effect);
+        PlayerManager.Instance.TakeDamage(dameDealt, gameObject, effect);
     }
     #endregion
 }

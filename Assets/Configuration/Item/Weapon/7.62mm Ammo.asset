@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: 7.62mm Ammo
   m_EditorClassIdentifier: 
+  id: W2
   itemName: 7.62mm Ammo
   rank: 1
   type: 0

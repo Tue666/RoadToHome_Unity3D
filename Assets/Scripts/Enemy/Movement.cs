@@ -71,7 +71,7 @@ public class Movement : MonoBehaviour
 
     void DetectPlayer()
     {
-        float distance = Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position);
+        float distance = Vector3.Distance(transform.position, PlayerManager.Instance.playerObj.transform.position);
         if ((!isDectecting && distance <= mutableDetectRange)) // Detected player
         {
             mutableDetectRange = _detectRange * 2.5f + enemy.escapeRange;
@@ -119,7 +119,7 @@ public class Movement : MonoBehaviour
         }
         if (!target.isDie)
         {
-            if (Vector3.Distance(transform.position, PlayerManager.Instance.player.transform.position) <= _agent.stoppingDistance)
+            if (Vector3.Distance(transform.position, PlayerManager.Instance.playerObj.transform.position) <= _agent.stoppingDistance)
             {
                 if (Time.time >= nextAttackTime)
                 {
@@ -130,7 +130,7 @@ public class Movement : MonoBehaviour
             }
             target.animator.SetFloat("Speed", speed);
             _agent.speed = speed;
-            _agent.SetDestination(PlayerManager.Instance.player.transform.position);
+            _agent.SetDestination(PlayerManager.Instance.playerObj.transform.position);
         }
         else _agent.isStopped = true;
     }

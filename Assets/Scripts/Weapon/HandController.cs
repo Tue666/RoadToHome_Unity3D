@@ -67,9 +67,9 @@ public class HandController : MonoBehaviour
             if (hitObject != null)
             {
                 if (hitObject is Target)
-                    ((Target)hitObject).TakeDamage(currentHand.damage + PlayerManager.Instance.strength, hit.point);
+                    ((Target)hitObject).TakeDamage(currentHand.damage + PlayerManager.Instance.player.strength, hit.point);
                 if (hitObject is Boss)
-                    ((Boss)hitObject).TakeDamage(currentHand.damage + PlayerManager.Instance.strength, hit.point);
+                    ((Boss)hitObject).TakeDamage(currentHand.damage + PlayerManager.Instance.player.strength, hit.point);
             }
         }
     }

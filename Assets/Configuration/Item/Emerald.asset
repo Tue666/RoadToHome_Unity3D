@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: Emerald
   m_EditorClassIdentifier: 
+  id: M5
   itemName: Emerald
   rank: 1
   type: 2

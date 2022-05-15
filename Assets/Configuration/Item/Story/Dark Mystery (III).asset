@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: Dark Mystery (III)
   m_EditorClassIdentifier: 
+  id: S3
   itemName: Dark Mystery (III) - Unique
   rank: 4
   type: 4

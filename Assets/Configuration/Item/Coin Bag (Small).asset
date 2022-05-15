@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: Coin Bag (Small)
   m_EditorClassIdentifier: 
+  id: M2
   itemName: Coin Bag (Small)
   rank: 1
   type: 5

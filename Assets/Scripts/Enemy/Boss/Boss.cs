@@ -88,7 +88,7 @@ public class Boss : MonoBehaviour
 
     void Scan(float startPositionDistance)
     {
-        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.player.transform.position);
+        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.playerObj.transform.position);
         if (distance <= boss.scanRange)
         {
             // The boss is currently in the sleeping position
@@ -170,7 +170,7 @@ public class Boss : MonoBehaviour
     public void Walk(string effect = "")
     {
         AudioManager.Instance.PlayEffect("ENEMY", "Boss Walk");
-        HandleEffectTakeDamage(effect);
+        PlayerManager.Instance.HandleEffect(effect);
     }
     public void Drop()
     {
@@ -264,21 +264,5 @@ public class Boss : MonoBehaviour
         SystemWindowManager.Instance.ShowWindowSystem("SUCCESS", "Successful boss challenge, PROOOOOOO :)))");
         BossUI.Instance.HideHealthBar();
         AudioManager.Instance.StopBackground();
-    }
-
-    public void HandleEffectTakeDamage(string effect)
-    {
-        switch (effect)
-        {
-            case "Shake":
-                StartCoroutine(MainUI.Instance.ShakeScreen(0.3f, 0.2f, PlayerManager.Instance.cameraRecoil.transform));
-                break;
-            case "Fly Away":
-                StartCoroutine(MainUI.Instance.ShakeScreen(0.3f, 0.2f, PlayerManager.Instance.cameraRecoil.transform));
-                StartCoroutine(MainUI.Instance.FlyAway(5f, 0.4f, transform.forward, PlayerManager.Instance.player.transform));
-                break;
-            default:
-                break;
-        }
     }
 }

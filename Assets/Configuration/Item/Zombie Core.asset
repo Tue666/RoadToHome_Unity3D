@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: Zombie Core
   m_EditorClassIdentifier: 
+  id: M8
   itemName: Zombie Core
   rank: 2
   type: 1
@@ -23,7 +24,7 @@ MonoBehaviour:
     You
     can sell it to a store or keep it as a souvenir or study. It all depends on you.
 
-    
+
 
     Obtained
     from defeating zombies in the park.'

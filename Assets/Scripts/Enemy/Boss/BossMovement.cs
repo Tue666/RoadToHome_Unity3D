@@ -64,13 +64,13 @@ public class BossMovement : MonoBehaviour
 
     void Rotate()
     {
-        Vector3 dir = PlayerManager.Instance.player.transform.position - transform.position;
+        Vector3 dir = PlayerManager.Instance.playerObj.transform.position - transform.position;
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime);
     }
 
     void Chasing()
     {
-        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.player.transform.position);
+        float distance = Helpers.vector2DDistance(transform.position, PlayerManager.Instance.playerObj.transform.position);
         if (distance > bossCS.boss.scanRange) // Give up challenge
         {
             bossCS.shift = State.SLEEP;
@@ -79,6 +79,6 @@ public class BossMovement : MonoBehaviour
             return;
         }
         if (agent.isOnNavMesh)
-            agent.SetDestination(PlayerManager.Instance.player.transform.position);
+            agent.SetDestination(PlayerManager.Instance.playerObj.transform.position);
     }
 }

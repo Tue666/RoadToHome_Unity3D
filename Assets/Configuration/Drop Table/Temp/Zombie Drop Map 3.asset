@@ -12,12 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c442cd1b867434487f986aabc28f2f, type: 3}
   m_Name: Zombie Drop Map 3
   m_EditorClassIdentifier: 
-  dropCount: 10
+  dropCount: 60
   droppedItems:
-  - item: {fileID: 11400000, guid: 906cc35aadc1c35459a0f4430ad86618, type: 2}
+  - item: {fileID: 11400000, guid: bd23823ada017114ea6bfd25b45926f7, type: 2}
     percent: 100
+  - item: {fileID: 11400000, guid: 26457d735f283134f8bbdc1541779c3b, type: 2}
+    percent: 100
+  - item: {fileID: 11400000, guid: e3e6207cce743974eaa16ec219c424d4, type: 2}
+    percent: 100
+  - item: {fileID: 11400000, guid: 0e5ce70d2a2655a4fa4f8644091ea745, type: 2}
+    percent: 100
+  - item: {fileID: 11400000, guid: 906cc35aadc1c35459a0f4430ad86618, type: 2}
+    percent: 60
   - item: {fileID: 11400000, guid: 8a437af6e23fe6a4c99dc16519661a7d, type: 2}
-    percent: 50
+    percent: 70
   - item: {fileID: 11400000, guid: 1c4ead2ea6e99b84fb9c3efca1498939, type: 2}
     percent: 20
   - item: {fileID: 11400000, guid: a49b503918a9bc842a7cbec10d4ef312, type: 2}

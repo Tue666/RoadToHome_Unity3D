@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6672ec47a20ca1c4683fc47bbd8f2188, type: 3}
   m_Name: The Sould Of The Devil
   m_EditorClassIdentifier: 
+  id: M7
   itemName: The Soul Of The Devil
   rank: 1
   type: 1

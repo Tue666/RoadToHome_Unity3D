@@ -6,7 +6,7 @@ public class NextSceneLoader : MonoBehaviour
 {
     void OnEnable()
     {
-        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+        SceneManager.LoadScene(2,LoadSceneMode.Single);
     }
 
 }

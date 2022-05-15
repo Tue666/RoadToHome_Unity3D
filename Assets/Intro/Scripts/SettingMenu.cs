@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using UnityEngine.Events;
 public class SettingMenu : MonoBehaviour
 {
@@ -14,8 +13,6 @@ public class SettingMenu : MonoBehaviour
 
     Resolution[] resolutions;
 
-    private bool isFullScreen = false;
-
     const string PrefName = "optionvalue";
 
     const string resName = "resolutionoption";
@@ -24,7 +21,6 @@ public class SettingMenu : MonoBehaviour
     {
         if (PlayerPrefs.GetInt("togglestate") == 1)
         {
-            isFullScreen = true;
             fullscreenToogle.isOn = true;
         }
         else
@@ -74,12 +70,12 @@ public class SettingMenu : MonoBehaviour
 
     public void SetResolution(int resolutionIndex)
     {
-
         Resolution resolution = resolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen, resolution.refreshRate);
     }
     public void SetQuality(int qualityIndex)
     {
+
         QualitySettings.SetQualityLevel(qualityIndex);
     }
 
@@ -92,10 +88,19 @@ public class SettingMenu : MonoBehaviour
         }
         else
         {
-            isFullScreen = true;
             PlayerPrefs.SetInt("togglestate", 1);
-        }
-            
+        } 
+    }
+
+    public void ReturnHome()
+    {
+        Time.timeScale = 1;
+        SceneLoader.Instance.LoadMap(0);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
 }

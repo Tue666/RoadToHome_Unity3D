@@ -6,6 +6,6 @@ public class Skip : MonoBehaviour
 {
     public void SkipScene()
     {
-        SceneManager.LoadScene("Intro", LoadSceneMode.Single);
+        SceneManager.LoadScene(2,LoadSceneMode.Single);
     }
 }

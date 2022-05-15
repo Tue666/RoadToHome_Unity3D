@@ -70,17 +70,17 @@ public class PlayerController : MonoBehaviour
 
         HandleSpeedMovement();
         Vector3 move = (transform.right * direction.x + transform.forward * direction.y) + Vector3.up * velocity;
-        controller.Move(move * (PlayerManager.Instance.movementSpeed + PlayerManager.Instance.movementPlus) * Time.deltaTime);
+        controller.Move(move * (PlayerManager.Instance.player.movementSpeed + PlayerManager.Instance.player.movementPlus) * Time.deltaTime);
     }
 
     void HandleSpeedMovement()
     {
         // Will stop until stamina reached 20
-        if (isStopping && PlayerManager.Instance.stamina <= 20)
+        if (isStopping && PlayerManager.Instance.player.stamina <= 20)
             return;
         else
             isStopping = false;
-        if (PlayerManager.Instance.stamina <= 0)
+        if (PlayerManager.Instance.player.stamina <= 0)
         {
             StopMovement();
             return;
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
             if (!isRunning)
             {
                 isRunning = true;
-                PlayerManager.Instance.movementSpeed = 10f + PlayerManager.Instance.movementPlus;
+                PlayerManager.Instance.player.movementSpeed = 10f + PlayerManager.Instance.player.movementPlus;
                 PlayerManager.Instance.StartStaminaDrop(-runningStaminaCost, waitStaminaDrop);
             }
             return;
@@ -110,7 +110,7 @@ public class PlayerController : MonoBehaviour
             if (!isWalking)
             {
                 isWalking = true;
-                PlayerManager.Instance.movementSpeed = 5f + PlayerManager.Instance.movementPlus;
+                PlayerManager.Instance.player.movementSpeed = 5f + PlayerManager.Instance.player.movementPlus;
                 PlayerManager.Instance.StartStaminaDrop(-walkingStaminaCost, waitStaminaDrop);
             }
             return;
@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour
         if (isWalking)
         {
             isWalking = false;
-            PlayerManager.Instance.movementSpeed = 1f + PlayerManager.Instance.movementPlus;
+            PlayerManager.Instance.player.movementSpeed = 1f + PlayerManager.Instance.player.movementPlus;
             PlayerManager.Instance.StartStaminaDrop(staminaRestore, waitStaminaDrop);
             WeaponManager.currentAnimator.SetBool("Walking", false);
         }
@@ -127,7 +127,7 @@ public class PlayerController : MonoBehaviour
     void StopMovement()
     {
         isStopping = true;
-        PlayerManager.Instance.movementSpeed = 0.5f;
+        PlayerManager.Instance.player.movementSpeed = 0.5f;
         WeaponManager.currentAnimator.SetBool("Running", false);
         WeaponManager.currentAnimator.SetBool("Walking", false);
         PlayerManager.Instance.StartStaminaDrop(staminaRestore, waitStaminaDrop);
@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour
     void Breathing()
     {
         // Start breath when stamine less than 25
-        if (PlayerManager.Instance.stamina <= 25)
+        if (PlayerManager.Instance.player.stamina <= 25)
         {
             if (!isBreathing)
             {
