@@ -13158,6 +13158,10 @@ PrefabInstance:
       propertyPath: m_text
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4969199595776081722, guid: 8e21264f0b798aa499db45b3f184279d, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 4969199595776081723, guid: 8e21264f0b798aa499db45b3f184279d, type: 3}
       propertyPath: m_text
       value: 1

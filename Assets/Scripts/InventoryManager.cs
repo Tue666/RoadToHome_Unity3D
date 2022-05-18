@@ -41,18 +41,6 @@ public class InventoryManager : MonoBehaviour
             Instance = this;
     }
 
-    void Start()
-    {
-        if (PlayerPrefs.GetString("GAME_MODE") == "continue")
-        {
-            LoadInventory();
-        }
-        else
-        {
-            inventoryItems.Add(new InventoryItem(GameManager.Instance.FindItemById("W1"), 30));
-        }
-    }
-
     public void SaveInventory()
     {
         List<InventoryItemData> inventoryData = new List<InventoryItemData>();
@@ -65,11 +53,16 @@ public class InventoryManager : MonoBehaviour
 
     public void LoadInventory()
     {
-        List<InventoryItemData> inventoryData = SaveSystem.Load("inventory") as List<InventoryItemData>;
-        foreach (InventoryItemData inventoryItemData in inventoryData)
+        if (PlayerPrefs.GetString("GAME_MODE") == "continue")
         {
-            inventoryItems.Add(new InventoryItem(GameManager.Instance.FindItemById(inventoryItemData.id), inventoryItemData.quantity));
+            List<InventoryItemData> inventoryData = SaveSystem.Load("inventory") as List<InventoryItemData>;
+            foreach (InventoryItemData inventoryItemData in inventoryData)
+            {
+                inventoryItems.Add(new InventoryItem(GameManager.Instance.FindItemById(inventoryItemData.id), inventoryItemData.quantity));
+            }
         }
+        else
+            inventoryItems.Add(new InventoryItem(GameManager.Instance.FindItemById("W1"), 30));
     }
 
     public bool ItemExists(ItemSO _item)
@@ -97,6 +90,10 @@ public class InventoryManager : MonoBehaviour
         // Refresh inventory if it's showing
         if (UIManager.Instance.isShowing("Character UI"))
             CharacterUI.Instance.InitializeInventory();
+        if (tableItem.item.id == "W1" || tableItem.item.id == "W2")
+            MainUI.Instance.UpdateRemainingAmmo();
+        if (tableItem.item.id == "P1" || tableItem.item.id == "P2")
+            MainUI.Instance.UpdateRemainingPotion();
     }
 
     public void EditItem(InventoryItem newItem)

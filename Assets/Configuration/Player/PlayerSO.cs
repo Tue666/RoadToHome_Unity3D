@@ -3,18 +3,18 @@ using UnityEngine;
 [System.Serializable]
 class PlayerData
 {
-    public float strength = 10f;
-    public int maxLevel = 30;
-    public int currentLevel = 1;
-    public float maxHealth = 200f;
-    public float health = 200f;
-    public float maxStamina = 200f;
-    public float stamina = 200f;
-    public float defense = 6f;
-    public float maxExp = 900f;
-    public float currentExp = 0f;
-    public float movementSpeed = 1f;
-    public float movementPlus = 0f;
+    public float strength = 10f; //10f-99990f
+    public int maxLevel = 30; //30-9999
+    public int currentLevel = 1; //1-9999
+    public float maxHealth = 200f; //200f-1999800f
+    public float health = 200f; //200f-1999800f
+    public float maxStamina = 200f; //200f
+    public float stamina = 200f; //200f
+    public float defense = 6f; //6f-59994f
+    public float maxExp = 900f; //900f-3000300f
+    public float currentExp = 0f; //0f-3000300f
+    public float movementSpeed = 1f; //1f
+    public float movementPlus = 0f; //0f-3f
 
     public PlayerData() { }
 
@@ -38,18 +38,18 @@ class PlayerData
 [CreateAssetMenu(fileName = "PlayerSO", menuName = "Configuration/Player")]
 public class PlayerSO : ScriptableObject
 {
-    public float strength = 10f;
-    public int maxLevel = 30;
-    public int currentLevel = 1;
-    public float maxHealth = 200f;
-    public float health = 200f;
-    public float maxStamina = 200f;
-    public float stamina = 200f;
-    public float defense = 6f;
-    public float maxExp = 900f;
-    public float currentExp = 0f;
-    public float movementSpeed = 1f;
-    public float movementPlus = 0f;
+    public float strength;
+    public int maxLevel;
+    public int currentLevel;
+    public float maxHealth;
+    public float health;
+    public float maxStamina;
+    public float stamina;
+    public float defense;
+    public float maxExp;
+    public float currentExp;
+    public float movementSpeed;
+    public float movementPlus;
 
     public void SavePlayer()
     {

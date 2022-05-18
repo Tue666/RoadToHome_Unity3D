@@ -18,25 +18,13 @@ MonoBehaviour:
   type: 4
   icon: {fileID: 21300000, guid: 686161071ef7775448055f798bea6d70, type: 3}
   function: 0
-  description: 'In 2302, Technology advanced dramatically.
+  description: 'It seems that humans do not naturally turn into zombies
 
-    But suddenly one
-    day a strange disease appeared in the world, everyone started going crazy and
-    attacking the people around.
+    Looks
+    like the military side or the terrorist organizations are planning something
 
-    According to research, there is a new virus
-    that can be transmitted through bites and cause people to start hunting like
-    a monster.
-
-    In less than a few days, the entire world was left with nothing
-    but wandering ''monsters'', and they began to spread rapidly through other cities.
-
-    Many
-    cities were destroyed by ''monsters''.
-
-    And you who one of the survivors.What
-    will you do to survive and can you reveal the secret behind the curtain that
-    turns everyone into monsters?'
+    You
+    have to go through the warehouse to know more of the secrets behind it.'
   maximum: 1
   weight: 0
   sellPrice: 0

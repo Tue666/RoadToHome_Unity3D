@@ -18,8 +18,15 @@ MonoBehaviour:
   type: 0
   icon: {fileID: 21300000, guid: b6e5dae661460cf428308e867998cbff, type: 3}
   function: 0
-  description: "Ammo required for the use of guns such as:\nSCAR-L, M416, M16-A4,
-    AUG-A3, M249, Mini 14, ....\n\nObtained from defeating zombies in the warehouse\r."
+  description: 'Ammo required for the use of guns such as:
+
+    SCAR-L, M416, M16-A4,
+    AUG-A3, M249, Mini 14, ....
+
+    
+
+    Obtained from defeating zombies in the
+    warehouse.'
   maximum: 999
   weight: 0
   sellPrice: 1000

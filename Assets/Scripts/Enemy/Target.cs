@@ -149,7 +149,7 @@ public class Target : MonoBehaviour
                 movement.agent.isStopped = false;
                 Destroy(evolutionObject);
             }
-            yield return new WaitForSeconds(evolutionSpeed + Random.Range(0, 10));
+            yield return new WaitForSeconds(Random.Range(0, evolutionSpeed));
         }
     }
 }

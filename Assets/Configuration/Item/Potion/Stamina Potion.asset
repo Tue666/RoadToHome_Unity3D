@@ -18,10 +18,18 @@ MonoBehaviour:
   type: 2
   icon: {fileID: 21300000, guid: 5aabaadcd5e8dce4296119d032114c28, type: 3}
   function: 2
-  description: "A magic potion developed after the apocalypse, to help you recover
-    a bit of stamina. It is very precious in times of urgency, so use it wisely.\r\n+
-    15% stamina.\r\nCooldown time: 10 seconds\r.\n\nObtained from defeating zombies
-    in the industrial area."
+  description: 'A magic potion developed after the apocalypse, to help you recover
+    a bit of stamina. It is very precious in times of urgency, so use it wisely.
+
+    +
+    15% stamina.
+
+    Cooldown time: 10 seconds.
+
+    
+
+    Obtained from defeating
+    zombies in the industrial area.'
   maximum: 999
   weight: 0
   sellPrice: 5000

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Zombie Map 2
   m_EditorClassIdentifier: 
   difficult: 7
-  maxLevel: 11
+  maxLevel: 13
   summonRatePercent: 100
   evolutionSpeed: 5
   attackRange: 3

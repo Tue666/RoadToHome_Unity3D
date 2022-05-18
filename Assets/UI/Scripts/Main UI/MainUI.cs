@@ -198,8 +198,19 @@ public class MainUI : MonoBehaviour
 
     public void RemainingAmmoChanged(int newValue)
     {
-        weapons[currentWeaponIndex].remainingAmmo.text = newValue.ToString();
+        weapons[currentWeaponIndex].remainingAmmo.text = "/" + newValue.ToString();
         HandleNoAmmoColor(currentWeaponIndex);
+    }
+
+    public void UpdateRemainingAmmo()
+    {
+        int index = 0;
+        foreach (Gun gun in PlayerManager.Instance.gunsEquiqqed)
+        {
+            if (InventoryManager.Instance.ItemExists(gun.ammo))
+                weapons[index].remainingAmmo.text = InventoryManager.Instance.GetItem(gun.ammo).quantity.ToString();
+            index++;
+        }
     }
     #endregion
 
@@ -213,6 +224,17 @@ public class MainUI : MonoBehaviour
             potionsUI[index].potionIcon.sprite = item.icon;
             if (InventoryManager.Instance.ItemExists(item))
                 potionsUI[index].potionCount.text = InventoryManager.Instance.GetItem(item).quantity.ToString();
+            index++;
+        }
+    }
+
+    public void UpdateRemainingPotion()
+    {
+        int index = 0;
+        foreach (ItemSO potion in PlayerManager.Instance.potionsEquipped)
+        {
+            if (InventoryManager.Instance.ItemExists(potion))
+                potionsUI[index].potionCount.text = InventoryManager.Instance.GetItem(potion).quantity.ToString();
             index++;
         }
     }
@@ -265,15 +287,15 @@ public class MainUI : MonoBehaviour
         int CDTime = 0;
         switch (potionSlot)
         {
-            case 1:
+            case 0:
                 {
-                    potionCDIcon = potionsUI[0].potionCountdown;
+                    potionCDIcon = potionsUI[potionSlot].potionCountdown;
                     CDTime = potionCountdownTimeOne;
                 }
                 break;
-            case 2:
+            case 1:
                 {
-                    potionCDIcon = potionsUI[1].potionCountdown;
+                    potionCDIcon = potionsUI[potionSlot].potionCountdown;
                     CDTime = potionCountdownTimeTwo;
                 }
                 break;

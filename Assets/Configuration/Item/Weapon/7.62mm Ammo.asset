@@ -18,8 +18,15 @@ MonoBehaviour:
   type: 0
   icon: {fileID: 21300000, guid: 74ac7beeb1d051941957b3335b748d31, type: 3}
   function: 0
-  description: "Ammo required for the use of guns such as:\nAKM, Groza, Karabiner
-    98 Kurz, M24, M14 EBR, SKS, ....\n\nObtained from defeating zombies in the warehouse\r."
+  description: 'Ammo required for the use of guns such as:
+
+    AKM, Groza, Karabiner
+    98 Kurz, M24, M14 EBR, SKS, ....
+
+    
+
+    Obtained from defeating zombies
+    in the warehouse.'
   maximum: 999
   weight: 0
   sellPrice: 1000

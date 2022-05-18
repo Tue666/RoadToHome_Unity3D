@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Zombie
   m_EditorClassIdentifier: 
   difficult: 1
-  maxLevel: 5
+  maxLevel: 6
   summonRatePercent: 100
-  evolutionSpeed: 10
+  evolutionSpeed: 5
   attackRange: 3
   attackRate: 3.5
   dropItemsTime: 25

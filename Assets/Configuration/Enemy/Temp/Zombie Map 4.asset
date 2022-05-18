@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f696f81da2427247b1ed0a89501af52, type: 3}
   m_Name: Zombie Map 4
   m_EditorClassIdentifier: 
-  difficult: 19
-  maxLevel: 23
+  difficult: 22
+  maxLevel: 30
   summonRatePercent: 100
   evolutionSpeed: 5
   attackRange: 3

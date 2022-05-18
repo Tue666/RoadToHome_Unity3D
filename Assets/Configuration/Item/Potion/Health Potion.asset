@@ -18,9 +18,18 @@ MonoBehaviour:
   type: 2
   icon: {fileID: 21300000, guid: c2e882058c776c244adf87fa24d5282f, type: 3}
   function: 1
-  description: "A magical potion developed after the apocalypse that helps you heal
-    a bit. It is very precious in times of urgency, so use it wisely.\r\n+ 20% health.\r\nCooldown
-    time: 10 seconds\r.\n\nObtained from defeating zombies in the industrial area."
+  description: 'A magical potion developed after the apocalypse that helps you heal
+    a bit. It is very precious in times of urgency, so use it wisely.
+
+    + 20%
+    health.
+
+    Cooldown time: 10 seconds.
+
+    
+
+    Obtained from defeating
+    zombies in the industrial area.'
   maximum: 999
   weight: 0
   sellPrice: 5000

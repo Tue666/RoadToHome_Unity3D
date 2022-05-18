@@ -36,6 +36,7 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         player.LoadPlayer();
+        InventoryManager.Instance.LoadInventory();
 
         InitializeIfNecessary();
         MainUI.Instance.ExpChanged(player.currentExp, player.maxExp);
@@ -78,9 +79,9 @@ public class PlayerManager : MonoBehaviour
     public void LevelUp()
     {
         SystemWindowManager.Instance.ShowWindowSystem("DEFAULT", "Level Up\nCongratulations!");
-        player.strength *= player.currentLevel;
-        player.maxHealth *= player.currentLevel;
-        player.defense *= player.currentLevel;
+        player.strength = 10 * player.currentLevel;
+        player.maxHealth = 200 * player.currentLevel;
+        player.defense = 6 * player.currentLevel;
         player.maxExp = (player.currentLevel + 2) * 300;
         player.health = player.maxHealth; // Full of blood whenver level up
         MainUI.Instance.UpdateHealthBar(player.health / player.maxHealth);
@@ -104,7 +105,7 @@ public class PlayerManager : MonoBehaviour
     public void IncreaseExp(int difficult)
     {
         if (player.currentLevel >= player.maxLevel) return;
-        player.currentExp += ((difficult * 100) - (player.currentLevel * 10));
+        player.currentExp += ((difficult * 170) - (player.currentLevel * 10));
         float diff = player.maxExp - player.currentExp;
         if (diff <= 0)
         {

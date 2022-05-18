@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc0f6f950b77984eacedbf7b6b5e2ea, type: 3}
   m_Name: Player
   m_EditorClassIdentifier: 
-  strength: 10
-  maxLevel: 30
-  currentLevel: 1
-  maxHealth: 200
-  health: 200
+  strength: 99990
+  maxLevel: 9999
+  currentLevel: 999
+  maxHealth: 1999800
+  health: 1999800
   maxStamina: 200
   stamina: 200
-  defense: 6
-  maxExp: 900
-  currentExp: 0
-  movementSpeed: 1
-  movementPlus: 0
+  defense: 59994
+  maxExp: 3000300
+  currentExp: 3000300
+  movementSpeed: 4
+  movementPlus: 3
